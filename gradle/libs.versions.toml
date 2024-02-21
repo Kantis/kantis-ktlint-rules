@@ -1,0 +1,13 @@
+[versions]
+ktlint = "1.1.1"
+# The java-compilation version is the latest supported (not necessarily LTS) version of Java. It should be identical to Java-version used in `actions/setup-java`
+java-compilation = "21"
+# The java-target version is the lowest supported LTS version of Java. Jar's produced are bytecode compatible with this version.
+java-target = "8"
+
+[libraries]
+ktlint-cli = { module = "com.pinterest.ktlint:ktlint-cli", version.ref = "ktlint" }
+ktlint-cliRulesetCore = { module = "com.pinterest.ktlint:ktlint-cli-ruleset-core", version.ref = "ktlint" }
+ktlint-ruleEngineCore = { module = "com.pinterest.ktlint:ktlint-rule-engine-core", version.ref = "ktlint" }
+ktlint-test = { module = "com.pinterest.ktlint:ktlint-test", version.ref = "ktlint" }
+ktlint-rulesetStandard = { module = "com.pinterest.ktlint:ktlint-ruleset-standard", version.ref = "ktlint" }
