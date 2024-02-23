@@ -1,14 +1,21 @@
 package com.github.kantis.ktlint
 
-import com.pinterest.ktlint.rule.engine.core.api.*
+import com.pinterest.ktlint.rule.engine.core.api.ElementType
 import com.pinterest.ktlint.rule.engine.core.api.ElementType.COLLECTION_LITERAL_EXPRESSION
 import com.pinterest.ktlint.rule.engine.core.api.ElementType.COMMA
 import com.pinterest.ktlint.rule.engine.core.api.ElementType.INDICES
 import com.pinterest.ktlint.rule.engine.core.api.ElementType.TYPE_ARGUMENT_LIST
 import com.pinterest.ktlint.rule.engine.core.api.ElementType.VALUE_ARGUMENT
 import com.pinterest.ktlint.rule.engine.core.api.ElementType.VALUE_ARGUMENT_LIST
+import com.pinterest.ktlint.rule.engine.core.api.children
 import com.pinterest.ktlint.rule.engine.core.api.editorconfig.EditorConfig
 import com.pinterest.ktlint.rule.engine.core.api.editorconfig.EditorConfigProperty
+import com.pinterest.ktlint.rule.engine.core.api.isCodeLeaf
+import com.pinterest.ktlint.rule.engine.core.api.isWhiteSpaceWithNewline
+import com.pinterest.ktlint.rule.engine.core.api.nextSibling
+import com.pinterest.ktlint.rule.engine.core.api.prevCodeLeaf
+import com.pinterest.ktlint.rule.engine.core.api.prevCodeSibling
+import com.pinterest.ktlint.rule.engine.core.api.prevLeaf
 import org.ec4j.core.model.PropertyType
 import org.ec4j.core.model.PropertyType.PropertyValueParser
 import org.jetbrains.kotlin.com.intellij.lang.ASTNode
@@ -51,10 +58,9 @@ public class AdjustedTrailingCommaOnCallSiteRule :
       autoCorrect: Boolean,
       emit: (offset: Int, errorMessage: String, canBeAutoCorrected: Boolean) -> Unit,
    ) {
-      val inspectNode =
-         node
-            .children()
-            .last { it.elementType == ElementType.RBRACKET }
+      val inspectNode = node
+         .children()
+         .last { it.elementType == ElementType.RBRACKET }
       node.reportAndCorrectTrailingCommaNodeBefore(
          inspectNode = inspectNode,
          emit = emit,
@@ -70,10 +76,9 @@ public class AdjustedTrailingCommaOnCallSiteRule :
       autoCorrect: Boolean,
       emit: (offset: Int, errorMessage: String, canBeAutoCorrected: Boolean) -> Unit,
    ) {
-      val inspectNode =
-         node
-            .children()
-            .last { it.elementType == ElementType.RBRACKET }
+      val inspectNode = node
+         .children()
+         .last { it.elementType == ElementType.RBRACKET }
       node.reportAndCorrectTrailingCommaNodeBefore(
          inspectNode = inspectNode,
          emit = emit,
@@ -123,7 +128,9 @@ public class AdjustedTrailingCommaOnCallSiteRule :
       // Value argument -> Lambda expression -> Function literal
       if (valueArguments.first().firstChildNode.elementType != ElementType.FUNCTION_LITERAL ||
          valueArguments.first().firstChildNode?.firstChildNode != ElementType.LAMBDA_EXPRESSION
-      ) return false
+      ) {
+         return false
+      }
 
       return true
    }
@@ -133,10 +140,9 @@ public class AdjustedTrailingCommaOnCallSiteRule :
       autoCorrect: Boolean,
       emit: (offset: Int, errorMessage: String, canBeAutoCorrected: Boolean) -> Unit,
    ) {
-      val inspectNode =
-         node
-            .children()
-            .first { it.elementType == ElementType.GT }
+      val inspectNode = node
+         .children()
+         .first { it.elementType == ElementType.GT }
       node.reportAndCorrectTrailingCommaNodeBefore(
          inspectNode = inspectNode,
          emit = emit,
@@ -153,11 +159,10 @@ public class AdjustedTrailingCommaOnCallSiteRule :
    ) {
       val prevLeaf = inspectNode.prevLeaf()
       val trailingCommaNode = prevLeaf?.findPreviousTrailingCommaNodeOrNull()
-      val trailingCommaState =
-         when {
-            this.isMultiline() -> if (trailingCommaNode != null) TrailingCommaState.EXISTS else TrailingCommaState.MISSING
-            else -> if (trailingCommaNode != null) TrailingCommaState.REDUNDANT else TrailingCommaState.NOT_EXISTS
-         }
+      val trailingCommaState = when {
+         this.isMultiline() -> if (trailingCommaNode != null) TrailingCommaState.EXISTS else TrailingCommaState.MISSING
+         else -> if (trailingCommaNode != null) TrailingCommaState.REDUNDANT else TrailingCommaState.NOT_EXISTS
+      }
       when (trailingCommaState) {
          TrailingCommaState.EXISTS ->
             if (!isTrailingCommaAllowed) {
@@ -211,8 +216,7 @@ public class AdjustedTrailingCommaOnCallSiteRule :
          textContains('\n')
       }
 
-   private fun ASTNode.hasValueArgumentFollowedByWhiteSpaceWithNewline(): Boolean =
-      findValueArgumentFollowedByWhiteSpaceWithNewline() != null
+   private fun ASTNode.hasValueArgumentFollowedByWhiteSpaceWithNewline(): Boolean = findValueArgumentFollowedByWhiteSpaceWithNewline() != null
 
    private fun ASTNode.findValueArgumentFollowedByWhiteSpaceWithNewline() =
       this
@@ -222,12 +226,11 @@ public class AdjustedTrailingCommaOnCallSiteRule :
    private fun ASTNode.hasAtLeastOneArgument() = children().any { it.elementType == VALUE_ARGUMENT }
 
    private fun ASTNode.findPreviousTrailingCommaNodeOrNull(): ASTNode? {
-      val codeLeaf =
-         if (isCodeLeaf()) {
-            this
-         } else {
-            prevCodeLeaf()
-         }
+      val codeLeaf = if (isCodeLeaf()) {
+         this
+      } else {
+         prevCodeLeaf()
+      }
       return codeLeaf?.takeIf { it.elementType == COMMA }
    }
 
@@ -256,29 +259,26 @@ public class AdjustedTrailingCommaOnCallSiteRule :
    public companion object {
       private val BOOLEAN_VALUES_SET = setOf("true", "false")
 
-      public val TRAILING_COMMA_ON_CALL_SITE_PROPERTY: EditorConfigProperty<Boolean> =
-         EditorConfigProperty(
-            type =
-            PropertyType.LowerCasingPropertyType(
-               "ij_kotlin_allow_trailing_comma_on_call_site",
-               "Defines whether a trailing comma (or no trailing comma) should be enforced on the calling side," +
-                  "e.g. argument-list, when-entries, lambda-arguments, indices, etc." +
-                  "When set, IntelliJ IDEA uses this property to allow usage of a trailing comma by discretion " +
-                  "of the developer. KtLint however uses this setting to enforce consistent usage of the " +
-                  "trailing comma when set.",
-               PropertyValueParser.BOOLEAN_VALUE_PARSER,
-               BOOLEAN_VALUES_SET,
-            ),
-            defaultValue = true,
-            androidStudioCodeStyleDefaultValue = false,
-         )
+      public val TRAILING_COMMA_ON_CALL_SITE_PROPERTY: EditorConfigProperty<Boolean> = EditorConfigProperty(
+         type = PropertyType.LowerCasingPropertyType(
+            "ij_kotlin_allow_trailing_comma_on_call_site",
+            "Defines whether a trailing comma (or no trailing comma) should be enforced on the calling side," +
+               "e.g. argument-list, when-entries, lambda-arguments, indices, etc." +
+               "When set, IntelliJ IDEA uses this property to allow usage of a trailing comma by discretion " +
+               "of the developer. KtLint however uses this setting to enforce consistent usage of the " +
+               "trailing comma when set.",
+            PropertyValueParser.BOOLEAN_VALUE_PARSER,
+            BOOLEAN_VALUES_SET,
+         ),
+         defaultValue = true,
+         androidStudioCodeStyleDefaultValue = false,
+      )
 
-      private val TYPES_ON_CALL_SITE =
-         TokenSet.create(
-            COLLECTION_LITERAL_EXPRESSION,
-            INDICES,
-            TYPE_ARGUMENT_LIST,
-            VALUE_ARGUMENT_LIST,
-         )
+      private val TYPES_ON_CALL_SITE = TokenSet.create(
+         COLLECTION_LITERAL_EXPRESSION,
+         INDICES,
+         TYPE_ARGUMENT_LIST,
+         VALUE_ARGUMENT_LIST,
+      )
    }
 }

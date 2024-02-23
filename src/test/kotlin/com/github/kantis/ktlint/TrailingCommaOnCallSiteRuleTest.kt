@@ -9,22 +9,20 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class TrailingCommaOnCallSiteRuleTest {
-   private val trailingCommaOnCallSiteRuleAssertThat =
-      assertThatRuleBuilder { AdjustedTrailingCommaOnCallSiteRule() }
-         // Keep formatted code readable
-         .addAdditionalRuleProvider { IndentationRule() }
-         .addRequiredRuleProviderDependenciesFrom(StandardRuleSetProvider())
-         .assertThat()
+   private val trailingCommaOnCallSiteRuleAssertThat = assertThatRuleBuilder { AdjustedTrailingCommaOnCallSiteRule() }
+      // Keep formatted code readable
+      .addAdditionalRuleProvider { IndentationRule() }
+      .addRequiredRuleProviderDependenciesFrom(StandardRuleSetProvider())
+      .assertThat()
 
    @Test
    fun `Given a class with a single lambda argument then do not add a trailing comma`() {
-      val code =
-         """
+      val code = """
             class Test: FunSpec({
                 test("a") {
                 }
             })
-            """.trimIndent()
+      """.trimIndent()
 
       trailingCommaOnCallSiteRuleAssertThat(code)
          .withEditorConfigOverride(TRAILING_COMMA_ON_CALL_SITE_PROPERTY to true)
@@ -33,8 +31,7 @@ class TrailingCommaOnCallSiteRuleTest {
 
    @Test
    fun `Given property allow trailing comma on call site is not set then remove trailing commas`() {
-      val code =
-         """
+      val code = """
             val foo1 = listOf("a", "b",)
 
             val foo2 = Pair(1, 2,)
@@ -47,9 +44,8 @@ class TrailingCommaOnCallSiteRuleTest {
             annotation class Foo5(val params: IntArray)
             @Foo5([1, 2,])
             val foo5: Int = 0
-            """.trimIndent()
-      val formattedCode =
-         """
+      """.trimIndent()
+      val formattedCode = """
             val foo1 = listOf("a", "b")
 
             val foo2 = Pair(1, 2)
@@ -62,7 +58,7 @@ class TrailingCommaOnCallSiteRuleTest {
             annotation class Foo5(val params: IntArray)
             @Foo5([1, 2])
             val foo5: Int = 0
-            """.trimIndent()
+      """.trimIndent()
       trailingCommaOnCallSiteRuleAssertThat(code)
          .hasLintViolations(
             LintViolation(1, 27, "Unnecessary trailing comma before \")\""),
@@ -75,8 +71,7 @@ class TrailingCommaOnCallSiteRuleTest {
 
    @Test
    fun `Given that the trailing comma is not allowed on call site then remove it from an argument list when present`() {
-      val code =
-         """
+      val code = """
             val list1 = listOf("a", "b",)
             val list2 = listOf(
                 "a",
@@ -86,9 +81,8 @@ class TrailingCommaOnCallSiteRuleTest {
                 "a",
                 "b", /* The comma before the comment should be removed without removing the comment itself */
             )
-            """.trimIndent()
-      val formattedCode =
-         """
+      """.trimIndent()
+      val formattedCode = """
             val list1 = listOf("a", "b")
             val list2 = listOf(
                 "a",
@@ -98,7 +92,7 @@ class TrailingCommaOnCallSiteRuleTest {
                 "a",
                 "b" /* The comma before the comment should be removed without removing the comment itself */
             )
-            """.trimIndent()
+      """.trimIndent()
       trailingCommaOnCallSiteRuleAssertThat(code)
          .withEditorConfigOverride(TRAILING_COMMA_ON_CALL_SITE_PROPERTY to false)
          .hasLintViolations(
@@ -110,8 +104,7 @@ class TrailingCommaOnCallSiteRuleTest {
 
    @Test
    fun `Given that the trailing comma is required on call site then add it to the argument list when missing`() {
-      val code =
-         """
+      val code = """
             val list1 = listOf("a", "b")
             val list2 = listOf(
                 "a",
@@ -121,9 +114,8 @@ class TrailingCommaOnCallSiteRuleTest {
                 "a",
                 "b" /* The comma should be inserted before the comment */
             )
-            """.trimIndent()
-      val formattedCode =
-         """
+      """.trimIndent()
+      val formattedCode = """
             val list1 = listOf("a", "b")
             val list2 = listOf(
                 "a",
@@ -133,7 +125,7 @@ class TrailingCommaOnCallSiteRuleTest {
                 "a",
                 "b", /* The comma should be inserted before the comment */
             )
-            """.trimIndent()
+      """.trimIndent()
       trailingCommaOnCallSiteRuleAssertThat(code)
          .withEditorConfigOverride(TRAILING_COMMA_ON_CALL_SITE_PROPERTY to true)
          .hasLintViolations(
@@ -144,8 +136,7 @@ class TrailingCommaOnCallSiteRuleTest {
 
    @Test
    fun `Given that the trailing comma is not allowed on call site then remove it from the type argument list when present`() {
-      val code =
-         """
+      val code = """
             val list1: List<String,> = emptyList()
             val list2: List<
                 String, // The comma before the comment should be removed without removing the comment itself
@@ -153,9 +144,8 @@ class TrailingCommaOnCallSiteRuleTest {
             val list3: List<
                 String, /* The comma before the comment should be removed without removing the comment itself */
                 > = emptyList()
-            """.trimIndent()
-      val formattedCode =
-         """
+      """.trimIndent()
+      val formattedCode = """
             val list1: List<String> = emptyList()
             val list2: List<
                 String // The comma before the comment should be removed without removing the comment itself
@@ -163,7 +153,7 @@ class TrailingCommaOnCallSiteRuleTest {
             val list3: List<
                 String /* The comma before the comment should be removed without removing the comment itself */
             > = emptyList()
-            """.trimIndent()
+      """.trimIndent()
       trailingCommaOnCallSiteRuleAssertThat(code)
          .withEditorConfigOverride(TRAILING_COMMA_ON_CALL_SITE_PROPERTY to false)
          .hasLintViolations(
@@ -175,8 +165,7 @@ class TrailingCommaOnCallSiteRuleTest {
 
    @Test
    fun `Given that the trailing comma is required on call site then add it to the type argument list when missing`() {
-      val code =
-         """
+      val code = """
             val list1: List<String> = emptyList()
             val list2: List<
                 String // The comma should be inserted before the comment
@@ -184,9 +173,8 @@ class TrailingCommaOnCallSiteRuleTest {
             val list3: List<
                 String /* The comma should be inserted before the comment */
             > = emptyList()
-            """.trimIndent()
-      val formattedCode =
-         """
+      """.trimIndent()
+      val formattedCode = """
             val list1: List<String> = emptyList()
             val list2: List<
                 String, // The comma should be inserted before the comment
@@ -194,7 +182,7 @@ class TrailingCommaOnCallSiteRuleTest {
             val list3: List<
                 String, /* The comma should be inserted before the comment */
             > = emptyList()
-            """.trimIndent()
+      """.trimIndent()
       trailingCommaOnCallSiteRuleAssertThat(code)
          .withEditorConfigOverride(TRAILING_COMMA_ON_CALL_SITE_PROPERTY to true)
          .hasLintViolations(
@@ -205,8 +193,7 @@ class TrailingCommaOnCallSiteRuleTest {
 
    @Test
    fun `Given that the trailing comma is not allowed on call site then remove it from the array index when present`() {
-      val code =
-         """
+      val code = """
             val foo = Array(2) { 42 }
             val bar1 = foo[1,]
             val bar2 = foo[
@@ -215,9 +202,8 @@ class TrailingCommaOnCallSiteRuleTest {
             val bar3 = foo[
                 1, /* The comma before the comment should be removed without removing the comment itself */
             ]
-            """.trimIndent()
-      val formattedCode =
-         """
+      """.trimIndent()
+      val formattedCode = """
             val foo = Array(2) { 42 }
             val bar1 = foo[1]
             val bar2 = foo[
@@ -226,7 +212,7 @@ class TrailingCommaOnCallSiteRuleTest {
             val bar3 = foo[
                 1 /* The comma before the comment should be removed without removing the comment itself */
             ]
-            """.trimIndent()
+      """.trimIndent()
       trailingCommaOnCallSiteRuleAssertThat(code)
          .withEditorConfigOverride(TRAILING_COMMA_ON_CALL_SITE_PROPERTY to false)
          .hasLintViolations(
@@ -238,8 +224,7 @@ class TrailingCommaOnCallSiteRuleTest {
 
    @Test
    fun `Given that the trailing comma is required on call site then add it to the array index when missing`() {
-      val code =
-         """
+      val code = """
             val foo = Array(2) { 42 }
             val bar1 = foo[1]
             val bar2 = foo[
@@ -248,9 +233,8 @@ class TrailingCommaOnCallSiteRuleTest {
             val bar3 = foo[
                 1 /* The comma should be inserted before the comment */
             ]
-            """.trimIndent()
-      val formattedCode =
-         """
+      """.trimIndent()
+      val formattedCode = """
             val foo = Array(2) { 42 }
             val bar1 = foo[1]
             val bar2 = foo[
@@ -259,7 +243,7 @@ class TrailingCommaOnCallSiteRuleTest {
             val bar3 = foo[
                 1, /* The comma should be inserted before the comment */
             ]
-            """.trimIndent()
+      """.trimIndent()
       trailingCommaOnCallSiteRuleAssertThat(code)
          .withEditorConfigOverride(TRAILING_COMMA_ON_CALL_SITE_PROPERTY to true)
          .hasLintViolations(
@@ -270,8 +254,7 @@ class TrailingCommaOnCallSiteRuleTest {
 
    @Test
    fun `Given that the trailing comma is not allowed on call site then remove it from the collection literal when present`() {
-      val code =
-         """
+      val code = """
             annotation class Annotation(val params: IntArray)
 
             @Annotation([1, 2,])
@@ -288,9 +271,8 @@ class TrailingCommaOnCallSiteRuleTest {
                 2, /* The comma before the comment should be removed without removing the comment itself */
             ])
             val foo3: Int = 0
-            """.trimIndent()
-      val formattedCode =
-         """
+      """.trimIndent()
+      val formattedCode = """
             annotation class Annotation(val params: IntArray)
 
             @Annotation([1, 2])
@@ -307,7 +289,7 @@ class TrailingCommaOnCallSiteRuleTest {
                 2 /* The comma before the comment should be removed without removing the comment itself */
             ])
             val foo3: Int = 0
-            """.trimIndent()
+      """.trimIndent()
       trailingCommaOnCallSiteRuleAssertThat(code)
          .withEditorConfigOverride(TRAILING_COMMA_ON_CALL_SITE_PROPERTY to false)
          .hasLintViolations(
@@ -319,8 +301,7 @@ class TrailingCommaOnCallSiteRuleTest {
 
    @Test
    fun `Given that the trailing comma is required on call site then add it to the collection literal when missing`() {
-      val code =
-         """
+      val code = """
             annotation class Annotation(val params: IntArray)
 
             @Annotation([1, 2])
@@ -349,9 +330,8 @@ class TrailingCommaOnCallSiteRuleTest {
                 ]
             )
             val foo4: Int = 0
-            """.trimIndent()
-      val formattedCode =
-         """
+      """.trimIndent()
+      val formattedCode = """
             annotation class Annotation(val params: IntArray)
 
             @Annotation([1, 2])
@@ -380,7 +360,7 @@ class TrailingCommaOnCallSiteRuleTest {
                 ],
             )
             val foo4: Int = 0
-            """.trimIndent()
+      """.trimIndent()
       trailingCommaOnCallSiteRuleAssertThat(code)
          .withEditorConfigOverride(TRAILING_COMMA_ON_CALL_SITE_PROPERTY to true)
          .hasLintViolations(
@@ -394,14 +374,13 @@ class TrailingCommaOnCallSiteRuleTest {
 
    @Test
    fun `Given that a trailing comma is required on call site then still it should not be added to the setter`() {
-      val code =
-         """
+      val code = """
             class Test {
                 var foo = Bar()
                     set(value) {
                     }
             }
-            """.trimIndent()
+      """.trimIndent()
       trailingCommaOnCallSiteRuleAssertThat(code)
          .withEditorConfigOverride(TRAILING_COMMA_ON_CALL_SITE_PROPERTY to true)
          .hasNoLintViolations()
@@ -409,8 +388,7 @@ class TrailingCommaOnCallSiteRuleTest {
 
    @Test
    fun `1297 - Given that the trailing comma is required on call site the a trailing comma to collection literal when missing`() {
-      val code =
-         """
+      val code = """
             annotation class FooBar(
                 val foo1: Array<String> = [],
                 val foo2: Array<String> = [],
@@ -425,9 +403,8 @@ class TrailingCommaOnCallSiteRuleTest {
                 bar1 = "bar-1" // Add trailing comma as the outer argument value list of the annotation is a multiline statement
             )
             val fooBar = null
-            """.trimIndent()
-      val formattedCode =
-         """
+      """.trimIndent()
+      val formattedCode = """
             annotation class FooBar(
                 val foo1: Array<String> = [],
                 val foo2: Array<String> = [],
@@ -442,7 +419,7 @@ class TrailingCommaOnCallSiteRuleTest {
                 bar1 = "bar-1", // Add trailing comma as the outer argument value list of the annotation is a multiline statement
             )
             val fooBar = null
-            """.trimIndent()
+      """.trimIndent()
       trailingCommaOnCallSiteRuleAssertThat(code)
          .withEditorConfigOverride(TRAILING_COMMA_ON_CALL_SITE_PROPERTY to true)
          .hasLintViolations(
@@ -453,8 +430,7 @@ class TrailingCommaOnCallSiteRuleTest {
 
    @Test
    fun `Issue 1379 - Given that a trailing comma is required on call site then add trailing comma after array in annotation when missing`() {
-      val code =
-         """
+      val code = """
             import kotlin.reflect.KClass
 
             @Foo(
@@ -464,9 +440,8 @@ class TrailingCommaOnCallSiteRuleTest {
                 ]
             )
             annotation class Foo(val values: Array<KClass<*>>)
-            """.trimIndent()
-      val formattedCode =
-         """
+      """.trimIndent()
+      val formattedCode = """
             import kotlin.reflect.KClass
 
             @Foo(
@@ -476,7 +451,7 @@ class TrailingCommaOnCallSiteRuleTest {
                 ],
             )
             annotation class Foo(val values: Array<KClass<*>>)
-            """.trimIndent()
+      """.trimIndent()
       trailingCommaOnCallSiteRuleAssertThat(code)
          .withEditorConfigOverride(TRAILING_COMMA_ON_CALL_SITE_PROPERTY to true)
          .hasLintViolations(
@@ -487,15 +462,14 @@ class TrailingCommaOnCallSiteRuleTest {
 
    @Test
    fun `Issue 1602 - Given that an empty argument list with a comment, dot add a trailing comma`() {
-      val code =
-         """
+      val code = """
             val foo1 = setOf<Int>(
                 // some comment
             )
             val foo2 = setOf<Int>(
             )
             val foo1 = setOf<Int>()
-            """.trimIndent()
+      """.trimIndent()
       trailingCommaOnCallSiteRuleAssertThat(code)
          .withEditorConfigOverride(TRAILING_COMMA_ON_CALL_SITE_PROPERTY to true)
          .hasNoLintViolations()
@@ -505,8 +479,7 @@ class TrailingCommaOnCallSiteRuleTest {
    inner class `Issue 1642 - Given a multiline argument` {
       @Test
       fun `Issue 1642 - Given a single multiline argument then do not add a trailing comma`() {
-         val code =
-            """
+         val code = """
                 fun main() {
                     bar(
                         object : Foo {
@@ -516,7 +489,7 @@ class TrailingCommaOnCallSiteRuleTest {
                         },
                     )
                 }
-                """.trimIndent()
+         """.trimIndent()
          trailingCommaOnCallSiteRuleAssertThat(code)
             .withEditorConfigOverride(TRAILING_COMMA_ON_CALL_SITE_PROPERTY to true)
             .hasNoLintViolations()
@@ -524,8 +497,7 @@ class TrailingCommaOnCallSiteRuleTest {
 
       @Test
       fun `Issue 1642 - Given an argument followed by multiline argument then add a trailing comma`() {
-         val code =
-            """
+         val code = """
                 fun main() {
                     bar(
                         "foo",
@@ -536,7 +508,7 @@ class TrailingCommaOnCallSiteRuleTest {
                         }
                     )
                 }
-                """.trimIndent()
+         """.trimIndent()
          trailingCommaOnCallSiteRuleAssertThat(code)
             .withEditorConfigOverride(TRAILING_COMMA_ON_CALL_SITE_PROPERTY to true)
             .hasLintViolation(8, 10, "Missing trailing comma before \")\"")
@@ -544,8 +516,7 @@ class TrailingCommaOnCallSiteRuleTest {
 
       @Test
       fun `Issue 1642 - Given a multiline argument followed by another argument then add a trailing comma`() {
-         val code =
-            """
+         val code = """
                 fun main() {
                     bar(
                         object : Foo {
@@ -556,7 +527,7 @@ class TrailingCommaOnCallSiteRuleTest {
                         "foo"
                     )
                 }
-                """.trimIndent()
+         """.trimIndent()
          trailingCommaOnCallSiteRuleAssertThat(code)
             .withEditorConfigOverride(TRAILING_COMMA_ON_CALL_SITE_PROPERTY to true)
             .hasLintViolation(8, 14, "Missing trailing comma before \")\"")
@@ -565,8 +536,7 @@ class TrailingCommaOnCallSiteRuleTest {
 
    @Test
    fun `Issue 1676 - Given a trailing comma followed by a kdoc then do no add another trailing comma`() {
-      val code =
-         """
+      val code = """
             val foo1 = setOf(
                 1, /** Comment */
             )
@@ -580,7 +550,7 @@ class TrailingCommaOnCallSiteRuleTest {
                  * Comment
                  */
             )
-            """.trimIndent()
+      """.trimIndent()
       trailingCommaOnCallSiteRuleAssertThat(code)
          .withEditorConfigOverride(TRAILING_COMMA_ON_CALL_SITE_PROPERTY to true)
          .hasNoLintViolations()
@@ -615,22 +585,20 @@ class TrailingCommaOnCallSiteRuleTest {
    // 'foo(...)'. This caused the IndentationRule to format the closing parenthesis after element "bar" incorrectly.
    @Test
    fun `Given a function call with a list parameter then add the trailing comma after the PsiElement representing the list`() {
-      val code =
-         """
+      val code = """
             val foo = foo(
                 listOf(
                     "bar",
                 )
             )
-            """.trimIndent()
-      val formattedCode =
-         """
+      """.trimIndent()
+      val formattedCode = """
             val foo = foo(
                 listOf(
                     "bar",
                 ),
             )
-            """.trimIndent()
+      """.trimIndent()
       trailingCommaOnCallSiteRuleAssertThat(code)
          .withEditorConfigOverride(TRAILING_COMMA_ON_CALL_SITE_PROPERTY to true)
          .hasLintViolation(4, 6, "Missing trailing comma before \")\"")

@@ -7,29 +7,26 @@ import com.pinterest.ktlint.test.KtLintAssertThat
 import org.junit.jupiter.api.Test
 
 class MultilineSupertypeListMustTerminateWithNewLineTest {
-
    private val multilineExpressionWrappingRuleAssertThat = KtLintAssertThat.assertThatRule {
       MultilineSupertypeListMustTerminateWithNewLine()
    }
 
    @Test
    fun `Given a multiline supertype list, then the class body must begin on a new line`() {
-      val code =
-         """
+      val code = """
             class A : B,
                C {
                val x = 5
             }
-            """.trimIndent()
+      """.trimIndent()
 
-      val formattedCode =
-         """
+      val formattedCode = """
             class A : B,
                 C
             {
                 val x = 5
             }
-            """.trimIndent()
+      """.trimIndent()
 
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
@@ -37,5 +34,4 @@ class MultilineSupertypeListMustTerminateWithNewLineTest {
          .hasLintViolation(2, 6, "Multiline super type list must terminate with a new line")
          .isFormattedAs(formattedCode)
    }
-
 }

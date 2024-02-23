@@ -1,9 +1,18 @@
 package com.github.kantis.ktlint
 
-import com.pinterest.ktlint.rule.engine.core.api.*
+import com.pinterest.ktlint.rule.engine.core.api.ElementType
+import com.pinterest.ktlint.rule.engine.core.api.IndentConfig
 import com.pinterest.ktlint.rule.engine.core.api.editorconfig.EditorConfig
 import com.pinterest.ktlint.rule.engine.core.api.editorconfig.INDENT_SIZE_PROPERTY
 import com.pinterest.ktlint.rule.engine.core.api.editorconfig.INDENT_STYLE_PROPERTY
+import com.pinterest.ktlint.rule.engine.core.api.firstChildLeafOrSelf
+import com.pinterest.ktlint.rule.engine.core.api.isPartOfComment
+import com.pinterest.ktlint.rule.engine.core.api.isWhiteSpaceWithNewline
+import com.pinterest.ktlint.rule.engine.core.api.lastChildLeafOrSelf
+import com.pinterest.ktlint.rule.engine.core.api.leavesIncludingSelf
+import com.pinterest.ktlint.rule.engine.core.api.prevCodeLeaf
+import com.pinterest.ktlint.rule.engine.core.api.prevCodeSibling
+import com.pinterest.ktlint.rule.engine.core.api.prevLeaf
 import org.jetbrains.kotlin.com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.com.intellij.psi.impl.source.tree.LeafPsiElement
 
@@ -15,7 +24,6 @@ public class ValueInAssignmentStartsOnSameLineRule : KantisRule(
       INDENT_STYLE_PROPERTY,
    ),
 ) {
-
    private var indentConfig = IndentConfig.DEFAULT_INDENT_CONFIG
 
    override fun beforeFirstNode(editorConfig: EditorConfig) {
@@ -30,8 +38,9 @@ public class ValueInAssignmentStartsOnSameLineRule : KantisRule(
       autoCorrect: Boolean,
       emit: (offset: Int, errorMessage: String, canBeAutoCorrected: Boolean) -> Unit,
    ) {
-      fun ASTNode.isPartOfSpreadOperatorExpression() = prevCodeLeaf()?.elementType == ElementType.MUL
-         && treeParent.elementType == ElementType.VALUE_ARGUMENT
+      fun ASTNode.isPartOfSpreadOperatorExpression() =
+         prevCodeLeaf()?.elementType == ElementType.MUL &&
+            treeParent.elementType == ElementType.VALUE_ARGUMENT
 
       if (node.elementType in CHAINABLE_EXPRESSION &&
          !node.isPartOfSpreadOperatorExpression() &&
@@ -46,13 +55,15 @@ public class ValueInAssignmentStartsOnSameLineRule : KantisRule(
    }
 
    private fun ASTNode.isValueInAnAssignment(): Boolean {
-      fun ASTNode.closingParenthesisOfFunctionOrNull() = takeIf { treeParent.elementType == ElementType.FUN }
-         ?.prevCodeLeaf()
-         ?.takeIf { it.elementType == ElementType.RPAR }
+      fun ASTNode.closingParenthesisOfFunctionOrNull() =
+         takeIf { treeParent.elementType == ElementType.FUN }
+            ?.prevCodeLeaf()
+            ?.takeIf { it.elementType == ElementType.RPAR }
 
-      fun ASTNode?.isElvisOperator() = this != null &&
-         elementType == ElementType.OPERATION_REFERENCE &&
-         firstChildNode.elementType == ElementType.ELVIS
+      fun ASTNode?.isElvisOperator() =
+         this != null &&
+            elementType == ElementType.OPERATION_REFERENCE &&
+            firstChildNode.elementType == ElementType.ELVIS
 
       return null != prevCodeSibling()
          ?.takeIf { it.elementType == ElementType.EQ || it.elementType == ElementType.OPERATION_REFERENCE }
@@ -92,11 +103,12 @@ public class ValueInAssignmentStartsOnSameLineRule : KantisRule(
          .any { it.isWhiteSpaceWithNewline() || it.isRegularStringPartWithNewline() }
    }
 
-   private fun ASTNode.isRightHandSideOfBinaryExpression() = takeIf {
-      it.treeParent.elementType == ElementType.BINARY_EXPRESSION
-   }.takeIf {
-      it?.prevCodeSibling()?.elementType == ElementType.OPERATION_REFERENCE
-   } != null
+   private fun ASTNode.isRightHandSideOfBinaryExpression() =
+      takeIf {
+         it.treeParent.elementType == ElementType.BINARY_EXPRESSION
+      }.takeIf {
+         it?.prevCodeSibling()?.elementType == ElementType.OPERATION_REFERENCE
+      } != null
 
    private fun ASTNode.replaceWithSingleSpace() {
       (this as LeafPsiElement).rawReplaceWithText(" ")

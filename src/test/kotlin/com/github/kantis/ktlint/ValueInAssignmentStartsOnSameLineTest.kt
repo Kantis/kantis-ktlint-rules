@@ -14,44 +14,45 @@ class ValueInAssignmentStartsOnSameLineTest {
    private val multilineExpressionWrappingRuleAssertThat = KtLintAssertThat.assertThatRule { ValueInAssignmentStartsOnSameLineRule() }
 
    private val violationMessage = "Value in assignment should start on same line as assignment"
-   private fun lintViolation(line: Int, col: Int) = LintViolation(line, col, violationMessage)
+
+   private fun lintViolation(
+      line: Int,
+      col: Int,
+   ) = LintViolation(line, col, violationMessage)
 
    @Nested
    inner class `Given a function call using a named argument` {
       @Test
       fun `Given value argument for a named parameter in a function with a multiline dot qualified expression on the same line as the assignment`() {
-         val code =
-            """
+         val code = """
                 val foo = 
                    foo(
                        parameterName = "The quick brown fox "
                            .plus("jumps ")
                            .plus("over the lazy dog"),
                    )
-                """.trimIndent()
+         """.trimIndent()
 
-         val formattedCode =
-            """
+         val formattedCode = """
                 val foo = foo(
                     parameterName = "The quick brown fox "
                         .plus("jumps ")
                         .plus("over the lazy dog"),
                 )
-            """.trimIndent()
+         """.trimIndent()
 
          multilineExpressionWrappingRuleAssertThat(code)
             .addAdditionalRuleProvider { IndentationRule() }
             .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
             .hasLintViolations(
-               lintViolation(2, 4)
+               lintViolation(2, 4),
             )
             .isFormattedAs(formattedCode)
       }
 
       @Test
       fun `Given value argument in a function with a multiline safe access expression on the same line as the assignment`() {
-         val code =
-            """
+         val code = """
              val foo =
                  foo(
                      parameterName =
@@ -59,16 +60,15 @@ class ValueInAssignmentStartsOnSameLineTest {
                              ?.plus("jumps ")
                              ?.plus("over the lazy dog"),
                  )
-             """.trimIndent()
+         """.trimIndent()
 
-         val formattedCode =
-            """
+         val formattedCode = """
              val foo = foo(
                  parameterName = theQuickBrownFoxOrNull
                      ?.plus("jumps ")
                      ?.plus("over the lazy dog"),
              )
-             """.trimIndent()
+         """.trimIndent()
          multilineExpressionWrappingRuleAssertThat(code)
             .addAdditionalRuleProvider { IndentationRule() }
             .hasLintViolations(
@@ -79,8 +79,7 @@ class ValueInAssignmentStartsOnSameLineTest {
 
       @Test
       fun `Given value argument in a function with a multiline combination of a safe access expression and a call expression on the same line as the assignment`() {
-         val code =
-            """
+         val code = """
                 val foo =
                     foo(
                         parameterName =
@@ -88,16 +87,15 @@ class ValueInAssignmentStartsOnSameLineTest {
                                 ?.plus("jumps ")
                                 ?.plus("over the lazy dog"),
                     )
-                """.trimIndent()
+         """.trimIndent()
 
-         val formattedCode =
-            """
+         val formattedCode = """
                 val foo = foo(
                     parameterName = theQuickBrownFoxOrNull()
                         ?.plus("jumps ")
                         ?.plus("over the lazy dog"),
                 )
-                """.trimIndent()
+         """.trimIndent()
 
          multilineExpressionWrappingRuleAssertThat(code)
             .addAdditionalRuleProvider { IndentationRule() }
@@ -110,8 +108,7 @@ class ValueInAssignmentStartsOnSameLineTest {
 
       @Test
       fun `Given value argument in a function with a multiline combination of a dot qualified and a safe access expression on the same line as the assignment`() {
-         val code =
-            """
+         val code = """
                 val foo =
                     foo(
                         parameterName =
@@ -119,16 +116,15 @@ class ValueInAssignmentStartsOnSameLineTest {
                                 .takeIf { it.jumps }
                                 ?.plus("jumps over the lazy dog"),
                     )
-                """.trimIndent()
+         """.trimIndent()
 
-         val formattedCode =
-            """
+         val formattedCode = """
                 val foo = foo(
                     parameterName = "The quick brown fox "
                         .takeIf { it.jumps }
                         ?.plus("jumps over the lazy dog"),
                 )
-                """.trimIndent()
+         """.trimIndent()
 
          multilineExpressionWrappingRuleAssertThat(code)
             .addAdditionalRuleProvider { IndentationRule() }
@@ -141,8 +137,7 @@ class ValueInAssignmentStartsOnSameLineTest {
 
       @Test
       fun `Given value argument in a function with a multiline call expression on the same line as the assignment`() {
-         val code =
-            """
+         val code = """
                 val foo =
                     foo(
                         parameterName =
@@ -150,16 +145,15 @@ class ValueInAssignmentStartsOnSameLineTest {
                                 "bar"
                             )
                     )
-                """.trimIndent()
+         """.trimIndent()
 
-         val formattedCode =
-            """
+         val formattedCode = """
                 val foo = foo(
                     parameterName = bar(
                         "bar"
                     )
                 )
-                """.trimIndent()
+         """.trimIndent()
 
          multilineExpressionWrappingRuleAssertThat(code)
             .addAdditionalRuleProvider { IndentationRule() }
@@ -175,24 +169,22 @@ class ValueInAssignmentStartsOnSameLineTest {
    inner class `Given a function call using an unnamed argument` {
       @Test
       fun `Given value argument in a function with a multiline binary expression on the same line as the assignment`() {
-         val code =
-            """
+         val code = """
                 val foo =
                     foo(
                         "The quick brown fox " +
                             "jumps " +
                             "over the lazy dog",
                     )
-                """.trimIndent()
+         """.trimIndent()
 
-         val formattedCode =
-            """
+         val formattedCode = """
                 val foo = foo(
                     "The quick brown fox " +
                         "jumps " +
                         "over the lazy dog",
                 )
-                """.trimIndent()
+         """.trimIndent()
 
          multilineExpressionWrappingRuleAssertThat(code)
             .addAdditionalRuleProvider { IndentationRule() }
@@ -204,24 +196,22 @@ class ValueInAssignmentStartsOnSameLineTest {
 
       @Test
       fun `Given value argument in a function with a multiline safe access expression on the same line as the assignment`() {
-         val code =
-            """
+         val code = """
                 val foo =
                     foo(
                         theQuickBrownFoxOrNull
                             ?.plus("jumps ")
                             ?.plus("over the lazy dog"),
                     )
-                """.trimIndent()
+         """.trimIndent()
 
-         val formattedCode =
-            """
+         val formattedCode = """
                 val foo = foo(
                     theQuickBrownFoxOrNull
                         ?.plus("jumps ")
                         ?.plus("over the lazy dog"),
                 )
-                """.trimIndent()
+         """.trimIndent()
 
          multilineExpressionWrappingRuleAssertThat(code)
             .addAdditionalRuleProvider { IndentationRule() }
@@ -233,53 +223,49 @@ class ValueInAssignmentStartsOnSameLineTest {
 
       @Test
       fun `Given value argument in a function with a multiline combination of a safe access expression and a call expression on the same line as the assignment`() {
-         val code =
-            """
+         val code = """
                 val foo =
                     foo(
                         theQuickBrownFoxOrNull()
                             ?.plus("jumps ")
                             ?.plus("over the lazy dog"),
                     )
-                """.trimIndent()
+         """.trimIndent()
 
-         val formattedCode =
-            """
+         val formattedCode = """
                 val foo = foo(
                     theQuickBrownFoxOrNull()
                         ?.plus("jumps ")
                         ?.plus("over the lazy dog"),
                 )
-                """.trimIndent()
+         """.trimIndent()
 
          multilineExpressionWrappingRuleAssertThat(code)
             .addAdditionalRuleProvider { IndentationRule() }
             .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
             .hasLintViolations(
-               lintViolation(2, 5)
+               lintViolation(2, 5),
             ).isFormattedAs(formattedCode)
       }
 
       @Test
       fun `Given value argument in a function with a multiline combination of a dot qualified and a safe access expression on the same line as the assignment`() {
-         val code =
-            """
+         val code = """
                 val foo =
                     foo(
                         "The quick brown fox "
                             .takeIf { it.jumps }
                             ?.plus("jumps over the lazy dog"),
                     )
-                """.trimIndent()
+         """.trimIndent()
 
-         val formattedCode =
-            """
+         val formattedCode = """
                 val foo = foo(
                     "The quick brown fox "
                         .takeIf { it.jumps }
                         ?.plus("jumps over the lazy dog"),
                 )
-                """.trimIndent()
+         """.trimIndent()
 
          multilineExpressionWrappingRuleAssertThat(code)
             .addAdditionalRuleProvider { IndentationRule() }
@@ -291,24 +277,22 @@ class ValueInAssignmentStartsOnSameLineTest {
 
       @Test
       fun `Given value argument in a function with a multiline call expression on the same line as the assignment`() {
-         val code =
-            """
+         val code = """
                 val foo =
                     foo(
                         bar(
                             "bar"
                         )
                     )
-                """.trimIndent()
+         """.trimIndent()
 
-         val formattedCode =
-            """
+         val formattedCode = """
                 val foo = foo(
                     bar(
                         "bar"
                     )
                 )
-                """.trimIndent()
+         """.trimIndent()
 
          multilineExpressionWrappingRuleAssertThat(code)
             .addAdditionalRuleProvider { IndentationRule() }
@@ -322,24 +306,22 @@ class ValueInAssignmentStartsOnSameLineTest {
 
    @Test
    fun `Given a declaration with parameter having a default value which is a multiline expression then keep trailing comma after the parameter`() {
-      val code =
-         """
+      val code = """
             fun foo(
                 val string: String =
                     barFoo
                         .count { it == "bar" },
                 val int: Int
             )
-            """.trimIndent()
+      """.trimIndent()
 
-      val formattedCode =
-         """
+      val formattedCode = """
             fun foo(
                 val string: String = barFoo
                     .count { it == "bar" },
                 val int: Int
             )
-            """.trimIndent()
+      """.trimIndent()
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .hasLintViolation(3, 9, violationMessage)
@@ -348,14 +330,13 @@ class ValueInAssignmentStartsOnSameLineTest {
 
    @Test
    fun `Given a return statement with a multiline expression then do not reformat as it would result in a compilation error`() {
-      val code =
-         """
+      val code = """
             fun foo() {
                 return bar(
                     "bar"
                 )
             }
-            """.trimIndent()
+      """.trimIndent()
       multilineExpressionWrappingRuleAssertThat(code)
 //         .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
          .hasNoLintViolations()
@@ -363,20 +344,18 @@ class ValueInAssignmentStartsOnSameLineTest {
 
    @Test
    fun `Given a function with a multiline body expression`() {
-      val code =
-         """
+      val code = """
             fun foo() =
                 bar(
                     "bar"
                 )
-            """.trimIndent()
+      """.trimIndent()
 
-      val formattedCode =
-         """
+      val formattedCode = """
             fun foo() = bar(
                 "bar"
             )
-            """.trimIndent()
+      """.trimIndent()
 
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
@@ -387,14 +366,13 @@ class ValueInAssignmentStartsOnSameLineTest {
 
    @Test
    fun `Given a function with a multiline signature without a return type but with a multiline expression body starting on same line as closing parenthesis of function`() {
-      val code =
-         """
+      val code = """
             fun foo(
                 foobar: String
             ) = bar(
                 foobar
             )
-            """.trimIndent()
+      """.trimIndent()
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
@@ -403,15 +381,14 @@ class ValueInAssignmentStartsOnSameLineTest {
 
    @Test
    fun `Given a function with a multiline lambda expression containing a binary expression`() {
-      val code =
-         """
+      val code = """
             val string: String
                 by lazy {
                     "The quick brown fox " +
                         "jumps " +
                         "over the lazy dog"
                 }
-            """.trimIndent()
+      """.trimIndent()
 
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
@@ -421,24 +398,22 @@ class ValueInAssignmentStartsOnSameLineTest {
 
    @Test
    fun `Given a function with a lambda expression containing a multiline string template`() {
-      val code =
-         """
+      val code = """
             val string: String
                 by lazy {
                     ${MULTILINE_STRING_QUOTE}The quick brown fox
                     jumps
                     over the lazy dog$MULTILINE_STRING_QUOTE.trimIndent()
                 }
-            """.trimIndent()
+      """.trimIndent()
 
-      val formattedCode =
-         """
+      val formattedCode = """
             val string: String
                 by lazy { ${MULTILINE_STRING_QUOTE}The quick brown fox
                     jumps
                     over the lazy dog$MULTILINE_STRING_QUOTE.trimIndent()
                 }
-            """.trimIndent()
+      """.trimIndent()
 
       multilineExpressionWrappingRuleAssertThat(code)
          .hasNoLintViolations()
@@ -449,8 +424,7 @@ class ValueInAssignmentStartsOnSameLineTest {
 
    @Test
    fun `Given a function with a multiline lambda expression`() {
-      val code =
-         """
+      val code = """
             val string =
                 listOf("The quick brown fox", "jumps", "over the lazy dog")
                     .map {
@@ -458,17 +432,16 @@ class ValueInAssignmentStartsOnSameLineTest {
                             .lowercase()
                             .substringAfter("o")
                     }
-            """.trimIndent()
+      """.trimIndent()
 
-      val formattedCode =
-         """
+      val formattedCode = """
             val string = listOf("The quick brown fox", "jumps", "over the lazy dog")
                 .map {
                     it
                         .lowercase()
                         .substringAfter("o")
                 }
-            """.trimIndent()
+      """.trimIndent()
 
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
@@ -479,8 +452,7 @@ class ValueInAssignmentStartsOnSameLineTest {
 
    @Test
    fun `Given a multiline string template after an arrow`() {
-      val code =
-         """
+      val code = """
             fun foo(bar: String) =
                 when (bar) {
                     "bar bar bar bar bar bar bar bar bar" ->
@@ -490,10 +462,9 @@ class ValueInAssignmentStartsOnSameLineTest {
                         $MULTILINE_STRING_QUOTE.trimIndent()
                     else -> ""
                 }
-            """.trimIndent()
+      """.trimIndent()
 
-      val formattedCode =
-         """
+      val formattedCode = """
             fun foo(bar: String) = when (bar) {
                 "bar bar bar bar bar bar bar bar bar" ->
                     $MULTILINE_STRING_QUOTE
@@ -502,7 +473,7 @@ class ValueInAssignmentStartsOnSameLineTest {
                     $MULTILINE_STRING_QUOTE.trimIndent()
                 else -> ""
             }
-            """.trimIndent()
+      """.trimIndent()
 
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
@@ -513,22 +484,20 @@ class ValueInAssignmentStartsOnSameLineTest {
 
    @Test
    fun `Move a multiline when statement as part of an assignment`() {
-      val code =
-         """
+      val code = """
             fun foo(bar: String) =
                 when (bar) {
                     "bar" -> true
                     else -> false
                 }
-            """.trimIndent()
+      """.trimIndent()
 
-      val formattedCode =
-         """
+      val formattedCode = """
             fun foo(bar: String) = when (bar) {
                 "bar" -> true
                 else -> false
             }
-            """.trimIndent()
+      """.trimIndent()
 
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
@@ -539,24 +508,22 @@ class ValueInAssignmentStartsOnSameLineTest {
 
    @Test
    fun `Move a multiline if statement as part of an assignment`() {
-      val code =
-         """
+      val code = """
             fun foo(bar: Boolean) =
                 if (bar) {
                     "bar"
                 } else {
                     "foo"
                 }
-            """.trimIndent()
+      """.trimIndent()
 
-      val formattedCode =
-         """
+      val formattedCode = """
             fun foo(bar: Boolean) = if (bar) {
                 "bar"
             } else {
                 "foo"
             }
-            """.trimIndent()
+      """.trimIndent()
 
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
@@ -567,24 +534,22 @@ class ValueInAssignmentStartsOnSameLineTest {
 
    @Test
    fun `Move a multiline try catch as part of an assignment`() {
-      val code =
-         """
+      val code = """
             fun foo() =
                 try {
                     // do something that might cause an exception
                 } catch(e: Exception) {
                     // handle exception
                 }
-            """.trimIndent()
+      """.trimIndent()
 
-      val formattedCode =
-         """
+      val formattedCode = """
             fun foo() = try {
                 // do something that might cause an exception
             } catch(e: Exception) {
                 // handle exception
             }
-            """.trimIndent()
+      """.trimIndent()
 
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
@@ -595,18 +560,16 @@ class ValueInAssignmentStartsOnSameLineTest {
 
    @Test
    fun `Move a multiline is-expression as part of an assignment`() {
-      val code =
-         """
+      val code = """
             fun foo(any: Any) =
                 any is
                     Foo
-            """.trimIndent()
+      """.trimIndent()
 
-      val formattedCode =
-         """
+      val formattedCode = """
             fun foo(any: Any) = any is
                 Foo
-            """.trimIndent()
+      """.trimIndent()
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
@@ -616,18 +579,16 @@ class ValueInAssignmentStartsOnSameLineTest {
 
    @Test
    fun `Move a multiline binary with type as part of an assignment`() {
-      val code =
-         """
+      val code = """
             fun foo(any: Any) =
                 any as
                     Foo
-            """.trimIndent()
+      """.trimIndent()
 
-      val formattedCode =
-         """
+      val formattedCode = """
             fun foo(any: Any) = any as
                 Foo
-            """.trimIndent()
+      """.trimIndent()
 
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
@@ -638,17 +599,15 @@ class ValueInAssignmentStartsOnSameLineTest {
 
    @Test
    fun `Move a multiline prefix expression as part of an assignment`() {
-      val code =
-         """
+      val code = """
             fun foo(any: Int) =
                 ++
                     42
-            """.trimIndent()
-      val formattedCode =
-         """
+      """.trimIndent()
+      val formattedCode = """
             fun foo(any: Int) = ++
                 42
-            """.trimIndent()
+      """.trimIndent()
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
@@ -658,20 +617,18 @@ class ValueInAssignmentStartsOnSameLineTest {
 
    @Test
    fun `Move a multiline array access expression as part of an assignment`() {
-      val code =
-         """
+      val code = """
             fun foo(any: Array<String>) =
                 any[
                     42
                 ]
-            """.trimIndent()
+      """.trimIndent()
 
-      val formattedCode =
-         """
+      val formattedCode = """
             fun foo(any: Array<String>) = any[
                 42
             ]
-            """.trimIndent()
+      """.trimIndent()
 
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
@@ -682,18 +639,16 @@ class ValueInAssignmentStartsOnSameLineTest {
 
    @Test
    fun `Move a multiline object literal as part of an assignment`() {
-      val code =
-         """
+      val code = """
             fun foo() =
                 object :
                     Foo() {}
-            """.trimIndent()
+      """.trimIndent()
 
-      val formattedCode =
-         """
+      val formattedCode = """
             fun foo() = object :
                 Foo() {}
-            """.trimIndent()
+      """.trimIndent()
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
@@ -703,22 +658,20 @@ class ValueInAssignmentStartsOnSameLineTest {
 
    @Test
    fun `Given a multiline expression with an EOL comment on the last line`() {
-      val code =
-         """
+      val code = """
             val foo =
                 bar
                     .length() // some-comment
 
             val foobar = "foobar"
-            """.trimIndent()
+      """.trimIndent()
 
-      val formattedCode =
-         """
+      val formattedCode = """
             val foo = bar
                 .length() // some-comment
 
             val foobar = "foobar"
-            """.trimIndent()
+      """.trimIndent()
 
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
@@ -729,8 +682,7 @@ class ValueInAssignmentStartsOnSameLineTest {
 
    @Test
    fun `Given an assignment to variable`() {
-      val code =
-         """
+      val code = """
             fun foo() {
                 var givenCode: String
 
@@ -739,10 +691,9 @@ class ValueInAssignmentStartsOnSameLineTest {
                     some text
                     $MULTILINE_STRING_QUOTE.trimIndent()
             }
-            """.trimIndent()
+      """.trimIndent()
 
-      val formattedCode =
-         """
+      val formattedCode = """
             fun foo() {
                 var givenCode: String
 
@@ -750,7 +701,7 @@ class ValueInAssignmentStartsOnSameLineTest {
                     some text
                 $MULTILINE_STRING_QUOTE.trimIndent()
             }
-            """.trimIndent()
+      """.trimIndent()
 
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
@@ -761,25 +712,22 @@ class ValueInAssignmentStartsOnSameLineTest {
 
    @Test
    fun `Given a comparison in which the right hand side is a multiline expression`() {
-
-      val code =
-         """
+      val code = """
             fun foo(bar: String): Boolean {
                 return bar !=
                     $MULTILINE_STRING_QUOTE
                     some text
                     $MULTILINE_STRING_QUOTE.trimIndent()
             }
-            """.trimIndent()
+      """.trimIndent()
 
-      val formattedCode =
-         """
+      val formattedCode = """
             fun foo(bar: String): Boolean {
                 return bar != $MULTILINE_STRING_QUOTE
                     some text
                 $MULTILINE_STRING_QUOTE.trimIndent()
             }
-            """.trimIndent()
+      """.trimIndent()
 
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
@@ -790,44 +738,40 @@ class ValueInAssignmentStartsOnSameLineTest {
 
    @Test
    fun `Given an elvis operator followed by a multiline expression then do not reformat`() {
-      val code =
-         """
+      val code = """
             fun fooBar(foobar: String?, bar: String) =
                 foo
                     ?.lowercase()
                     ?: bar
                         .uppercase()
                         .trimIndent()
-            """.trimIndent()
+      """.trimIndent()
 
-      val formattedCode =
-         """
+      val formattedCode = """
             fun fooBar(foobar: String?, bar: String) = foo
                 ?.lowercase()
                 ?: bar
                     .uppercase()
                     .trimIndent()
-            """.trimIndent()
+      """.trimIndent()
 
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
-         .hasLintViolation(2,5 , violationMessage)
+         .hasLintViolation(2, 5, violationMessage)
          .isFormattedAs(formattedCode)
    }
 
    @Test
    fun `Issue 2183 - Given a multiline postfix expression then reformat`() {
-      val code =
-         """
+      val code = """
             val foobar =
                 foo!!
                     .bar()
-            """.trimIndent()
-      val formattedCode =
-         """
+      """.trimIndent()
+      val formattedCode = """
             val foobar = foo!!
                 .bar()
-            """.trimIndent()
+      """.trimIndent()
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .hasLintViolation(2, 5, violationMessage)
@@ -836,8 +780,7 @@ class ValueInAssignmentStartsOnSameLineTest {
 
    @Test
    fun `Issue 2188 - Given a multiline prefix expression then reformat but do not wrap after prefix operator`() {
-      val code =
-         """
+      val code = """
             val bar =
                 bar(
                     *foo(
@@ -845,17 +788,16 @@ class ValueInAssignmentStartsOnSameLineTest {
                         "b"
                     )
                 )
-            """.trimIndent()
+      """.trimIndent()
 
-      val formattedCode =
-         """
+      val formattedCode = """
             val bar = bar(
                 *foo(
                     "a",
                     "b"
                 )
             )
-            """.trimIndent()
+      """.trimIndent()
 
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
@@ -865,8 +807,7 @@ class ValueInAssignmentStartsOnSameLineTest {
 
    @Test
    fun `Issue 2286 - `() {
-      val code =
-         """
+      val code = """
             val foo =
                 foo() +
                     bar1 {
@@ -875,16 +816,15 @@ class ValueInAssignmentStartsOnSameLineTest {
                     bar2 {
                         "bar2"
                     }
-            """.trimIndent()
+      """.trimIndent()
 
-      val formattedCode =
-         """
+      val formattedCode = """
             val foo = foo() + bar1 {
                 "bar1"
             } + bar2 {
                 "bar2"
             }
-            """.trimIndent()
+      """.trimIndent()
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .hasLintViolations(
@@ -897,17 +837,15 @@ class ValueInAssignmentStartsOnSameLineTest {
    @Disabled
    @Test
    fun `Issue 2286 - xx `() {
-      val code =
-         """
+      val code = """
             val foo = foo() + bar1 {
                 "bar1"
             } + "bar3" +
             bar2 {
                 "bar2"
             }
-            """.trimIndent()
-      val formattedCode =
-         """
+      """.trimIndent()
+      val formattedCode = """
             val foo =
                 foo() +
                     bar1 {
@@ -916,7 +854,7 @@ class ValueInAssignmentStartsOnSameLineTest {
                     bar2 {
                         "bar2"
                     }
-            """.trimIndent()
+      """.trimIndent()
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .hasLintViolations(

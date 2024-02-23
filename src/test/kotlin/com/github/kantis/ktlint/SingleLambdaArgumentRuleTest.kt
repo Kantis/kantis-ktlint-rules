@@ -8,24 +8,22 @@ import com.pinterest.ktlint.test.LintViolation
 import org.junit.jupiter.api.Test
 
 class SingleLambdaArgumentRuleTest {
-   private val trailingCommaOnCallSiteRuleAssertThat =
-      KtLintAssertThat.assertThatRuleBuilder { SingleLambdaArgumentRule() }
-         // Keep formatted code readable
-         .addAdditionalRuleProvider { IndentationRule() }
-         .addRequiredRuleProviderDependenciesFrom(StandardRuleSetProvider())
-         .assertThat()
+   private val trailingCommaOnCallSiteRuleAssertThat = KtLintAssertThat.assertThatRuleBuilder { SingleLambdaArgumentRule() }
+      // Keep formatted code readable
+      .addAdditionalRuleProvider { IndentationRule() }
+      .addRequiredRuleProviderDependenciesFrom(StandardRuleSetProvider())
+      .assertThat()
 
    @Test
    fun `Given a class with a single lambda argument then remove trailing commas and whitespace`() {
-      val code =
-         """
+      val code = """
             class Test: FunSpec(
                 {
                     test("a") {
                     }
                 },
             )
-            """.trimIndent()
+      """.trimIndent()
 
       val formattedCode = """
             class Test: FunSpec({
@@ -45,15 +43,14 @@ class SingleLambdaArgumentRuleTest {
 
    @Test
    fun `Given a class with a single lambda argument with a comment after lambda then remove trailing commas and whitespace`() {
-      val code =
-         """
+      val code = """
             class Test: FunSpec(
                 {
                     test("a") {
                     }
                 }, // Hello, world!
             )
-            """.trimIndent()
+      """.trimIndent()
 
       val formattedCode = """
             class Test: FunSpec({
@@ -73,15 +70,14 @@ class SingleLambdaArgumentRuleTest {
 
    @Test
    fun `Given a class with a single lambda argument with a comment before lambda then remove trailing commas and whitespace`() {
-      val code =
-         """
+      val code = """
             class Test: FunSpec( // Hello, world!
                 {
                     test("a") {
                     }
                 },
             )
-            """.trimIndent()
+      """.trimIndent()
 
       val formattedCode = """
             class Test: FunSpec({ // Hello, world!

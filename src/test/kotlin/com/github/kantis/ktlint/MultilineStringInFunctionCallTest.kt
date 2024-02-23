@@ -9,24 +9,21 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 class MultilineStringInFunctionCallTest {
-
    private val multilineExpressionWrappingRuleAssertThat = KtLintAssertThat.assertThatRule { MutlilineStringInFunctionCall() }
 
    @Disabled("Rule not implemented yet")
    @Test
    fun `Given a multiline string template in a function parameter to a new line`() {
-      val code =
-         """
+      val code = """
             fun someFunction() {
                 println($MULTILINE_STRING_QUOTE
                         The quick brown fox
                         jumps over the lazy dog
                         $MULTILINE_STRING_QUOTE.trimIndent())
             }
-            """.trimIndent()
+      """.trimIndent()
 
-      val formattedCode =
-         """
+      val formattedCode = """
             fun someFunction() {
                 println(
                     $MULTILINE_STRING_QUOTE
@@ -35,7 +32,7 @@ class MultilineStringInFunctionCallTest {
                     $MULTILINE_STRING_QUOTE.trimIndent()
                 )
             }
-            """.trimIndent()
+      """.trimIndent()
 
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
@@ -43,5 +40,4 @@ class MultilineStringInFunctionCallTest {
          .hasLintViolation(2, 13, "A multiline string in function call should start on a new line")
          .isFormattedAs(formattedCode)
    }
-
 }

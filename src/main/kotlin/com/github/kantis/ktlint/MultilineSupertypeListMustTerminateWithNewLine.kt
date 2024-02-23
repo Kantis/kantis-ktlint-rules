@@ -20,17 +20,16 @@ public class MultilineSupertypeListMustTerminateWithNewLine : KantisRule(
    private var indentConfig = IndentConfig.DEFAULT_INDENT_CONFIG
 
    override fun beforeFirstNode(editorConfig: EditorConfig) {
-      indentConfig =
-         IndentConfig(
-            indentStyle = editorConfig[INDENT_STYLE_PROPERTY],
-            tabWidth = editorConfig[INDENT_SIZE_PROPERTY],
-         )
+      indentConfig = IndentConfig(
+         indentStyle = editorConfig[INDENT_STYLE_PROPERTY],
+         tabWidth = editorConfig[INDENT_SIZE_PROPERTY],
+      )
    }
 
    override fun beforeVisitChildNodes(
       node: ASTNode,
       autoCorrect: Boolean,
-      emit: (offset: Int, errorMessage: String, canBeAutoCorrected: Boolean) -> Unit
+      emit: (offset: Int, errorMessage: String, canBeAutoCorrected: Boolean) -> Unit,
    ) {
       if (node.elementType == ElementType.SUPER_TYPE_LIST) {
          visitSuperTypeList(node, emit, autoCorrect)
@@ -40,7 +39,7 @@ public class MultilineSupertypeListMustTerminateWithNewLine : KantisRule(
    private fun visitSuperTypeList(
       node: ASTNode,
       emit: (offset: Int, errorMessage: String, canBeAutoCorrected: Boolean) -> Unit,
-      autoCorrect: Boolean
+      autoCorrect: Boolean,
    ) {
       val nextSibling = node.nextCodeSibling()
       if (node.anyNewline() && nextSibling != null) {
