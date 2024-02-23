@@ -365,21 +365,23 @@ class ValueInAssignmentStartsOnSameLineTest {
    fun `Given a function with a multiline body expression`() {
       val code =
          """
-            fun foo() = bar(
-                "bar"
-            )
-            """.trimIndent()
-      val formattedCode =
-         """
             fun foo() =
                 bar(
                     "bar"
                 )
             """.trimIndent()
+
+      val formattedCode =
+         """
+            fun foo() = bar(
+                "bar"
+            )
+            """.trimIndent()
+
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
-         .hasLintViolation(1, 13, "A multiline expression should start on a new line")
+         .hasLintViolation(2, 5, violationMessage)
          .isFormattedAs(formattedCode)
    }
 
@@ -404,38 +406,22 @@ class ValueInAssignmentStartsOnSameLineTest {
       val code =
          """
             val string: String
-                by lazy { "The quick brown fox " +
-                              "jumps " +
-                              "over the lazy dog"
-                }
-            """.trimIndent()
-      val formattedCode =
-         """
-            val string: String
                 by lazy {
                     "The quick brown fox " +
                         "jumps " +
                         "over the lazy dog"
                 }
             """.trimIndent()
+
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
-         .hasLintViolation(2, 15, "A multiline expression should start on a new line")
-         .isFormattedAs(formattedCode)
+         .hasNoLintViolations()
    }
 
    @Test
    fun `Given a function with a lambda expression containing a multiline string template`() {
       val code =
-         """
-            val string: String
-                by lazy { ${MULTILINE_STRING_QUOTE}The quick brown fox
-                    jumps
-                    over the lazy dog$MULTILINE_STRING_QUOTE.trimIndent()
-                }
-            """.trimIndent()
-      val formattedCode =
          """
             val string: String
                 by lazy {
@@ -444,11 +430,21 @@ class ValueInAssignmentStartsOnSameLineTest {
                     over the lazy dog$MULTILINE_STRING_QUOTE.trimIndent()
                 }
             """.trimIndent()
+
+      val formattedCode =
+         """
+            val string: String
+                by lazy { ${MULTILINE_STRING_QUOTE}The quick brown fox
+                    jumps
+                    over the lazy dog$MULTILINE_STRING_QUOTE.trimIndent()
+                }
+            """.trimIndent()
+
       multilineExpressionWrappingRuleAssertThat(code)
-         .addAdditionalRuleProvider { IndentationRule() }
-         .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
-         .hasLintViolation(2, 15, "A multiline expression should start on a new line")
-         .isFormattedAs(formattedCode)
+         .hasNoLintViolations()
+
+      multilineExpressionWrappingRuleAssertThat(formattedCode)
+         .hasNoLintViolations()
    }
 
    @Test
@@ -519,37 +515,31 @@ class ValueInAssignmentStartsOnSameLineTest {
    fun `Move a multiline when statement as part of an assignment`() {
       val code =
          """
-            fun foo(bar: String) = when (bar) {
-                "bar" -> true
-                else -> false
-            }
-            """.trimIndent()
-      val formattedCode =
-         """
             fun foo(bar: String) =
                 when (bar) {
                     "bar" -> true
                     else -> false
                 }
             """.trimIndent()
+
+      val formattedCode =
+         """
+            fun foo(bar: String) = when (bar) {
+                "bar" -> true
+                else -> false
+            }
+            """.trimIndent()
+
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
-         .hasLintViolation(1, 24, "A multiline expression should start on a new line")
+         .hasLintViolation(2, 5, violationMessage)
          .isFormattedAs(formattedCode)
    }
 
    @Test
    fun `Move a multiline if statement as part of an assignment`() {
       val code =
-         """
-            fun foo(bar: Boolean) = if (bar) {
-                "bar"
-            } else {
-                "foo"
-            }
-            """.trimIndent()
-      val formattedCode =
          """
             fun foo(bar: Boolean) =
                 if (bar) {
@@ -558,24 +548,26 @@ class ValueInAssignmentStartsOnSameLineTest {
                     "foo"
                 }
             """.trimIndent()
+
+      val formattedCode =
+         """
+            fun foo(bar: Boolean) = if (bar) {
+                "bar"
+            } else {
+                "foo"
+            }
+            """.trimIndent()
+
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
-         .hasLintViolation(1, 25, "A multiline expression should start on a new line")
+         .hasLintViolation(2, 5, violationMessage)
          .isFormattedAs(formattedCode)
    }
 
    @Test
    fun `Move a multiline try catch as part of an assignment`() {
       val code =
-         """
-            fun foo() = try {
-                // do something that might cause an exception
-            } catch(e: Exception) {
-                // handle exception
-            }
-            """.trimIndent()
-      val formattedCode =
          """
             fun foo() =
                 try {
@@ -584,10 +576,20 @@ class ValueInAssignmentStartsOnSameLineTest {
                     // handle exception
                 }
             """.trimIndent()
+
+      val formattedCode =
+         """
+            fun foo() = try {
+                // do something that might cause an exception
+            } catch(e: Exception) {
+                // handle exception
+            }
+            """.trimIndent()
+
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
-         .hasLintViolation(1, 13, "A multiline expression should start on a new line")
+         .hasLintViolation(2, 5, violationMessage)
          .isFormattedAs(formattedCode)
    }
 
@@ -595,19 +597,20 @@ class ValueInAssignmentStartsOnSameLineTest {
    fun `Move a multiline is-expression as part of an assignment`() {
       val code =
          """
-            fun foo(any: Any) = any is
-                Foo
-            """.trimIndent()
-      val formattedCode =
-         """
             fun foo(any: Any) =
                 any is
                     Foo
             """.trimIndent()
+
+      val formattedCode =
+         """
+            fun foo(any: Any) = any is
+                Foo
+            """.trimIndent()
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
-         .hasLintViolation(1, 21, "A multiline expression should start on a new line")
+         .hasLintViolation(2, 5, violationMessage)
          .isFormattedAs(formattedCode)
    }
 
@@ -615,19 +618,21 @@ class ValueInAssignmentStartsOnSameLineTest {
    fun `Move a multiline binary with type as part of an assignment`() {
       val code =
          """
-            fun foo(any: Any) = any as
-                Foo
-            """.trimIndent()
-      val formattedCode =
-         """
             fun foo(any: Any) =
                 any as
                     Foo
             """.trimIndent()
+
+      val formattedCode =
+         """
+            fun foo(any: Any) = any as
+                Foo
+            """.trimIndent()
+
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
-         .hasLintViolation(1, 21, "A multiline expression should start on a new line")
+         .hasLintViolation(2, 5, violationMessage)
          .isFormattedAs(formattedCode)
    }
 
@@ -635,19 +640,19 @@ class ValueInAssignmentStartsOnSameLineTest {
    fun `Move a multiline prefix expression as part of an assignment`() {
       val code =
          """
-            fun foo(any: Int) = ++
-                42
-            """.trimIndent()
-      val formattedCode =
-         """
             fun foo(any: Int) =
                 ++
                     42
             """.trimIndent()
+      val formattedCode =
+         """
+            fun foo(any: Int) = ++
+                42
+            """.trimIndent()
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
-         .hasLintViolation(1, 21, "A multiline expression should start on a new line")
+         .hasLintViolation(2, 5, violationMessage)
          .isFormattedAs(formattedCode)
    }
 
@@ -655,21 +660,23 @@ class ValueInAssignmentStartsOnSameLineTest {
    fun `Move a multiline array access expression as part of an assignment`() {
       val code =
          """
-            fun foo(any: Array<String>) = any[
-                42
-            ]
-            """.trimIndent()
-      val formattedCode =
-         """
             fun foo(any: Array<String>) =
                 any[
                     42
                 ]
             """.trimIndent()
+
+      val formattedCode =
+         """
+            fun foo(any: Array<String>) = any[
+                42
+            ]
+            """.trimIndent()
+
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
-         .hasLintViolation(1, 31, "A multiline expression should start on a new line")
+         .hasLintViolation(2, 5, violationMessage)
          .isFormattedAs(formattedCode)
    }
 
@@ -677,40 +684,21 @@ class ValueInAssignmentStartsOnSameLineTest {
    fun `Move a multiline object literal as part of an assignment`() {
       val code =
          """
-            fun foo() = object :
-                Foo() {}
-            """.trimIndent()
-      val formattedCode =
-         """
             fun foo() =
                 object :
                     Foo() {}
             """.trimIndent()
-      multilineExpressionWrappingRuleAssertThat(code)
-         .addAdditionalRuleProvider { IndentationRule() }
-         .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
-         .hasLintViolation(1, 13, "A multiline expression should start on a new line")
-         .isFormattedAs(formattedCode)
-   }
 
-   @Test
-   fun `Given a lambda expression with a multiline expression starting on a new line then do not report a violation`() {
-      val code =
+      val formattedCode =
          """
-            val foo =
-                listOf("foo")
-                    .let { bar ->
-                        if (fooBar > 42) {
-                            "foo"
-                        } else {
-                            "bar"
-                        }
-                    }
+            fun foo() = object :
+                Foo() {}
             """.trimIndent()
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
-         .hasNoLintViolations()
+         .hasLintViolation(2, 5, violationMessage)
+         .isFormattedAs(formattedCode)
    }
 
    @Test
@@ -773,15 +761,8 @@ class ValueInAssignmentStartsOnSameLineTest {
 
    @Test
    fun `Given a comparison in which the right hand side is a multiline expression`() {
+
       val code =
-         """
-            fun foo(bar: String): Boolean {
-                return bar != $MULTILINE_STRING_QUOTE
-                    some text
-                $MULTILINE_STRING_QUOTE.trimIndent()
-            }
-            """.trimIndent()
-      val formattedCode =
          """
             fun foo(bar: String): Boolean {
                 return bar !=
@@ -790,10 +771,20 @@ class ValueInAssignmentStartsOnSameLineTest {
                     $MULTILINE_STRING_QUOTE.trimIndent()
             }
             """.trimIndent()
+
+      val formattedCode =
+         """
+            fun foo(bar: String): Boolean {
+                return bar != $MULTILINE_STRING_QUOTE
+                    some text
+                $MULTILINE_STRING_QUOTE.trimIndent()
+            }
+            """.trimIndent()
+
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
-         .hasLintViolation(2, 19, "A multiline expression should start on a new line")
+         .hasLintViolation(3, 9, violationMessage)
          .isFormattedAs(formattedCode)
    }
 
@@ -808,9 +799,20 @@ class ValueInAssignmentStartsOnSameLineTest {
                         .uppercase()
                         .trimIndent()
             """.trimIndent()
+
+      val formattedCode =
+         """
+            fun fooBar(foobar: String?, bar: String) = foo
+                ?.lowercase()
+                ?: bar
+                    .uppercase()
+                    .trimIndent()
+            """.trimIndent()
+
       multilineExpressionWrappingRuleAssertThat(code)
          .addAdditionalRuleProvider { IndentationRule() }
-         .hasNoLintViolations()
+         .hasLintViolation(2,5 , violationMessage)
+         .isFormattedAs(formattedCode)
    }
 
    @Test

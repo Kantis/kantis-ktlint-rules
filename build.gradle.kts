@@ -1,6 +1,9 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
    kotlin("jvm") version "1.9.22"
-//    id("dev.drewhamilton.poko")
+   id("com.adarshr.test-logger") version "4.0.0"
    `java-library`
    `maven-publish`
 }
@@ -23,9 +26,9 @@ tasks.withType<JavaCompile>().configureEach {
    options.release = javaTargetVersion.asInt()
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+tasks.withType<KotlinCompile>().configureEach {
    // Convert Java version (e.g. "1.8" or "11") to Kotlin JvmTarget ("8" resp. "11")
-   compilerOptions.jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.fromTarget(JavaVersion.toVersion(javaTargetVersion).toString())
+   compilerOptions.jvmTarget = JvmTarget.fromTarget(JavaVersion.toVersion(javaTargetVersion).toString())
 }
 
 val requestedJdkVersion = project.findProperty("testJdkVersion")?.toString()?.toInt()
@@ -67,7 +70,7 @@ tasks.withType<Test>().configureEach {
          .canCompileOrRun(JavaLanguageVersion.of(11))
    ) {
       // workaround for https://github.com/pinterest/ktlint/issues/1618. Java 11 started printing warning logs. Java 16 throws an error
-      jvmArgs("--add-opens=java.base/java.lang=ALL-UNNAMED")
+      jvmArgs("--add-opens", "java.base/java.lang=ALL-UNNAMED")
    }
 }
 
@@ -90,32 +93,24 @@ artifacts {
    archives(javadocJar)
 }
 
-val ktlint: Configuration by configurations.creating
-
 dependencies {
    implementation(libs.ktlint.cli)
    implementation(libs.ktlint.cliRulesetCore)
    implementation(libs.ktlint.ruleEngineCore)
    testImplementation(libs.ktlint.rulesetStandard)
    testImplementation(libs.ktlint.test)
+   testRuntimeOnly(libs.slf4j)
 }
 
-val ktlintCheck by tasks.registering(JavaExec::class) {
-   dependsOn(tasks.classes)
-   group = LifecycleBasePlugin.VERIFICATION_GROUP
-   mainClass = "com.pinterest.ktlint.Main"
-   // Adding compiled classes of this ruleset to the classpath so that ktlint validates the ruleset using its own ruleset
-   classpath(ktlint, sourceSets.main.map { it.output })
-   args("--log-level=debug", "src/**/*.kt")
-}
-
-tasks.check {
-   dependsOn(ktlintCheck)
+testlogger {
+   showPassed = false
 }
 
 publishing {
    publications {
       create<MavenPublication>("mavenJava") {
+         from(components["java"])
+
          pom {
             licenses {
                license {

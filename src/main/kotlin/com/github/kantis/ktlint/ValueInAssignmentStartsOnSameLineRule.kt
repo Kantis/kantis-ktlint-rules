@@ -5,9 +5,7 @@ import com.pinterest.ktlint.rule.engine.core.api.editorconfig.EditorConfig
 import com.pinterest.ktlint.rule.engine.core.api.editorconfig.INDENT_SIZE_PROPERTY
 import com.pinterest.ktlint.rule.engine.core.api.editorconfig.INDENT_STYLE_PROPERTY
 import org.jetbrains.kotlin.com.intellij.lang.ASTNode
-import org.jetbrains.kotlin.com.intellij.psi.PsiPlainText
 import org.jetbrains.kotlin.com.intellij.psi.impl.source.tree.LeafPsiElement
-import org.jetbrains.kotlin.com.intellij.psi.impl.source.tree.PsiPlainTextImpl
 
 public class ValueInAssignmentStartsOnSameLineRule : KantisRule(
    "value-in-assignment-starts-on-same-line",
@@ -17,6 +15,7 @@ public class ValueInAssignmentStartsOnSameLineRule : KantisRule(
       INDENT_STYLE_PROPERTY,
    ),
 ) {
+
    private var indentConfig = IndentConfig.DEFAULT_INDENT_CONFIG
 
    override fun beforeFirstNode(editorConfig: EditorConfig) {
@@ -40,9 +39,8 @@ public class ValueInAssignmentStartsOnSameLineRule : KantisRule(
       ) {
          visitExpression(node, emit, autoCorrect)
       }
-      if (node.elementType == ElementType.BINARY_EXPRESSION &&
-         node.treeParent.elementType != ElementType.BINARY_EXPRESSION
-      ) {
+
+      if (node.elementType == ElementType.BINARY_EXPRESSION && node.treeParent.elementType != ElementType.BINARY_EXPRESSION) {
          visitExpression(node, emit, autoCorrect)
       }
    }
@@ -100,7 +98,9 @@ public class ValueInAssignmentStartsOnSameLineRule : KantisRule(
       it?.prevCodeSibling()?.elementType == ElementType.OPERATION_REFERENCE
    } != null
 
-   private fun ASTNode.replaceWithSingleSpace() { (this as LeafPsiElement).rawReplaceWithText(" ") }
+   private fun ASTNode.replaceWithSingleSpace() {
+      (this as LeafPsiElement).rawReplaceWithText(" ")
+   }
 
    private companion object {
       // Based  on https://kotlinlang.org/spec/expressions.html#expressions
