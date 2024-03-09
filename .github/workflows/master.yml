@@ -35,10 +35,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
-      - name: Gradle check
-        run: ./gradlew check
-
-      - name: Publish
-        run: ./gradlew publish -Pversion="${{ steps.stable-version.outputs.version || steps.version.outputs.version }}"
+      - name: Build and publish
+        run: ./gradlew check publish -Pversion="${{ steps.stable-version.outputs.version || steps.version.outputs.version }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
