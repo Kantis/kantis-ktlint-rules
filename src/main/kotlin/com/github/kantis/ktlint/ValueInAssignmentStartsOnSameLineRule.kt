@@ -88,10 +88,15 @@ public class ValueInAssignmentStartsOnSameLineRule : KantisRule(
       if (node.containsWhitespaceWithNewline() && node.isValueInAnAssignment()) {
          node.prevLeaf { !it.isPartOfComment() }
             .let { prevLeaf ->
-               if (prevLeaf != null && prevLeaf.textContains('\n') && prevLeaf.startOffset + prevLeaf.textLength + node.textLength <= maxLineLength) {
-                  emit(node.startOffset, "Value in assignment should start on same line as assignment", true)
-                  if (autoCorrect) {
-                     prevLeaf.replaceWithSingleSpace()
+               if (prevLeaf != null && prevLeaf.textContains('\n')) {
+                  if ( prevLeaf.startOffset + prevLeaf.textLength + node.firstChildNode.textLength <= maxLineLength) {
+                     emit(node.startOffset, "Value in assignment should start on same line as assignment", true)
+                     if (autoCorrect) {
+                        prevLeaf.replaceWithSingleSpace()
+
+                     }
+                  } else {
+                     // Line would become too long, skipping
                   }
                }
             }
