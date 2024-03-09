@@ -110,6 +110,13 @@ publishing {
       create<MavenPublication>("mavenJava") {
          from(components["java"])
 
+         repositories {
+            maven {
+               name = "GitHubPackages"
+               url = uri("https://maven.pkg.github.com/kantis/kantis-ktlint-rules")
+            }
+         }
+
          pom {
             licenses {
                license {
