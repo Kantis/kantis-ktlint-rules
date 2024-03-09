@@ -106,23 +106,40 @@ testlogger {
 }
 
 publishing {
+   repositories {
+      maven("https://maven.pkg.github.com/kantis/kantis-ktlint-rules") {
+         name = "GitHubPackages"
+      }
+   }
+
    publications {
       create<MavenPublication>("mavenJava") {
          from(components["java"])
 
-         repositories {
-            maven {
-               name = "GitHubPackages"
-               url = uri("https://maven.pkg.github.com/kantis/kantis-ktlint-rules")
-            }
-         }
-
          pom {
+            name.set("Kantis Ktlint Rules")
+            description.set("Custom Ktlint ruleset adjusted to my personal preferences.")
+            url.set("https://github.com/Kantis/kantis-ktlint-rules")
+
+            scm {
+               connection.set("scm:git:https://github.com/Kantis/kantis-ktlint-rules/")
+               developerConnection.set("scm:git:https://github.com/Kantis/")
+               url.set("https://github.com/Kantis/kantis-ktlint-rules")
+            }
+
             licenses {
                license {
                   name = "The Apache Software License, Version 2.0"
                   url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
                   distribution = "repo"
+               }
+            }
+
+            developers {
+               developer {
+                  id.set("Kantis")
+                  name.set("Emil Kantis")
+                  email.set("emil.kantis@protonmail.com")
                }
             }
          }
