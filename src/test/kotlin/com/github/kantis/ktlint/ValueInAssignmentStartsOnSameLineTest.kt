@@ -51,6 +51,23 @@ class ValueInAssignmentStartsOnSameLineTest {
       }
 
       @Test
+      fun `Given a line which must be broken to not exceed max line length, then the rule does not flag a violation`() {
+         val code = """
+                val foo: AVeryVeryLongTypeNameWhichWouldMakeTheLineTooLongIfWeAlsoIncludeTheAssignmentOnTheSameLine = 
+                   loremIpsumDolorSitAmetConsecteturAdipiscingElitSedDoEiusmodTemporIncididuntUtLaboreEtDoloreMagnaAliqua(
+                       parameterName = "The quick brown fox "
+                           .plus("jumps ")
+                           .plus("over the lazy dog"),
+                   )
+         """.trimIndent()
+
+
+         multilineExpressionWrappingRuleAssertThat(code)
+            .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
+            .hasNoLintViolations()
+      }
+
+      @Test
       fun `Given value argument in a function with a multiline safe access expression on the same line as the assignment`() {
          val code = """
              val foo =

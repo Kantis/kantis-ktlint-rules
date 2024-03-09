@@ -5,6 +5,7 @@ import com.pinterest.ktlint.rule.engine.core.api.IndentConfig
 import com.pinterest.ktlint.rule.engine.core.api.editorconfig.EditorConfig
 import com.pinterest.ktlint.rule.engine.core.api.editorconfig.INDENT_SIZE_PROPERTY
 import com.pinterest.ktlint.rule.engine.core.api.editorconfig.INDENT_STYLE_PROPERTY
+import com.pinterest.ktlint.rule.engine.core.api.editorconfig.MAX_LINE_LENGTH_PROPERTY
 import com.pinterest.ktlint.rule.engine.core.api.firstChildLeafOrSelf
 import com.pinterest.ktlint.rule.engine.core.api.isPartOfComment
 import com.pinterest.ktlint.rule.engine.core.api.isWhiteSpaceWithNewline
@@ -22,15 +23,19 @@ public class ValueInAssignmentStartsOnSameLineRule : KantisRule(
    usesEditorConfigProperties = setOf(
       INDENT_SIZE_PROPERTY,
       INDENT_STYLE_PROPERTY,
+      MAX_LINE_LENGTH_PROPERTY,
    ),
 ) {
    private var indentConfig = IndentConfig.DEFAULT_INDENT_CONFIG
+   private var maxLineLength = 120
 
    override fun beforeFirstNode(editorConfig: EditorConfig) {
       indentConfig = IndentConfig(
          indentStyle = editorConfig[INDENT_STYLE_PROPERTY],
          tabWidth = editorConfig[INDENT_SIZE_PROPERTY],
       )
+
+      maxLineLength = editorConfig[MAX_LINE_LENGTH_PROPERTY]
    }
 
    override fun beforeVisitChildNodes(
@@ -83,7 +88,7 @@ public class ValueInAssignmentStartsOnSameLineRule : KantisRule(
       if (node.containsWhitespaceWithNewline() && node.isValueInAnAssignment()) {
          node.prevLeaf { !it.isPartOfComment() }
             .let { prevLeaf ->
-               if (prevLeaf != null && prevLeaf.textContains('\n')) {
+               if (prevLeaf != null && prevLeaf.textContains('\n') && prevLeaf.startOffset + prevLeaf.textLength + node.textLength <= maxLineLength) {
                   emit(node.startOffset, "Value in assignment should start on same line as assignment", true)
                   if (autoCorrect) {
                      prevLeaf.replaceWithSingleSpace()
