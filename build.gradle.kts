@@ -109,6 +109,10 @@ publishing {
    repositories {
       maven("https://maven.pkg.github.com/kantis/kantis-ktlint-rules") {
          name = "GitHubPackages"
+         credentials {
+            username = providers.environmentVariable("GITHUB_ACTOR").get()
+            password = providers.environmentVariable("GITHUB_TOKEN").get()
+         }
       }
    }
 
