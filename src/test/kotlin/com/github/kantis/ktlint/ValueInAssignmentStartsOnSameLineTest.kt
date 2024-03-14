@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 class ValueInAssignmentStartsOnSameLineTest {
-   private val multilineExpressionWrappingRuleAssertThat = KtLintAssertThat.assertThatRule { ValueInAssignmentStartsOnSameLineRule() }
+   private val valueInAssignmentStartsOnSameLineRule = KtLintAssertThat.assertThatRule { ValueInAssignmentStartsOnSameLineRule() }
 
    private val violationMessage = "Value in assignment should start on same line as assignment"
 
@@ -41,7 +41,7 @@ class ValueInAssignmentStartsOnSameLineTest {
                 )
          """.trimIndent()
 
-         multilineExpressionWrappingRuleAssertThat(code)
+         valueInAssignmentStartsOnSameLineRule(code)
             .addAdditionalRuleProvider { IndentationRule() }
             .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
             .hasLintViolations(
@@ -62,7 +62,7 @@ class ValueInAssignmentStartsOnSameLineTest {
          """.trimIndent()
 
 
-         multilineExpressionWrappingRuleAssertThat(code)
+         valueInAssignmentStartsOnSameLineRule(code)
             .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
             .hasNoLintViolations()
       }
@@ -86,7 +86,7 @@ class ValueInAssignmentStartsOnSameLineTest {
                      ?.plus("over the lazy dog"),
              )
          """.trimIndent()
-         multilineExpressionWrappingRuleAssertThat(code)
+         valueInAssignmentStartsOnSameLineRule(code)
             .addAdditionalRuleProvider { IndentationRule() }
             .hasLintViolations(
                lintViolation(2, 5),
@@ -114,7 +114,7 @@ class ValueInAssignmentStartsOnSameLineTest {
                 )
          """.trimIndent()
 
-         multilineExpressionWrappingRuleAssertThat(code)
+         valueInAssignmentStartsOnSameLineRule(code)
             .addAdditionalRuleProvider { IndentationRule() }
             .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
             .hasLintViolations(
@@ -143,7 +143,7 @@ class ValueInAssignmentStartsOnSameLineTest {
                 )
          """.trimIndent()
 
-         multilineExpressionWrappingRuleAssertThat(code)
+         valueInAssignmentStartsOnSameLineRule(code)
             .addAdditionalRuleProvider { IndentationRule() }
             .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
             .hasLintViolations(
@@ -172,7 +172,7 @@ class ValueInAssignmentStartsOnSameLineTest {
                 )
          """.trimIndent()
 
-         multilineExpressionWrappingRuleAssertThat(code)
+         valueInAssignmentStartsOnSameLineRule(code)
             .addAdditionalRuleProvider { IndentationRule() }
             .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
             .hasLintViolations(
@@ -203,7 +203,7 @@ class ValueInAssignmentStartsOnSameLineTest {
                 )
          """.trimIndent()
 
-         multilineExpressionWrappingRuleAssertThat(code)
+         valueInAssignmentStartsOnSameLineRule(code)
             .addAdditionalRuleProvider { IndentationRule() }
             .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
             .hasLintViolations(
@@ -230,7 +230,7 @@ class ValueInAssignmentStartsOnSameLineTest {
                 )
          """.trimIndent()
 
-         multilineExpressionWrappingRuleAssertThat(code)
+         valueInAssignmentStartsOnSameLineRule(code)
             .addAdditionalRuleProvider { IndentationRule() }
             .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
             .hasLintViolations(
@@ -257,7 +257,7 @@ class ValueInAssignmentStartsOnSameLineTest {
                 )
          """.trimIndent()
 
-         multilineExpressionWrappingRuleAssertThat(code)
+         valueInAssignmentStartsOnSameLineRule(code)
             .addAdditionalRuleProvider { IndentationRule() }
             .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
             .hasLintViolations(
@@ -284,7 +284,7 @@ class ValueInAssignmentStartsOnSameLineTest {
                 )
          """.trimIndent()
 
-         multilineExpressionWrappingRuleAssertThat(code)
+         valueInAssignmentStartsOnSameLineRule(code)
             .addAdditionalRuleProvider { IndentationRule() }
             .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
             .hasLintViolations(
@@ -311,7 +311,7 @@ class ValueInAssignmentStartsOnSameLineTest {
                 )
          """.trimIndent()
 
-         multilineExpressionWrappingRuleAssertThat(code)
+         valueInAssignmentStartsOnSameLineRule(code)
             .addAdditionalRuleProvider { IndentationRule() }
 //            .addAdditionalRuleProvider { ParameterWrappingRule() }
             .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
@@ -339,7 +339,7 @@ class ValueInAssignmentStartsOnSameLineTest {
                 val int: Int
             )
       """.trimIndent()
-      multilineExpressionWrappingRuleAssertThat(code)
+      valueInAssignmentStartsOnSameLineRule(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .hasLintViolation(3, 9, violationMessage)
          .isFormattedAs(formattedCode)
@@ -354,7 +354,7 @@ class ValueInAssignmentStartsOnSameLineTest {
                 )
             }
       """.trimIndent()
-      multilineExpressionWrappingRuleAssertThat(code)
+      valueInAssignmentStartsOnSameLineRule(code)
 //         .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
          .hasNoLintViolations()
    }
@@ -374,7 +374,7 @@ class ValueInAssignmentStartsOnSameLineTest {
             )
       """.trimIndent()
 
-      multilineExpressionWrappingRuleAssertThat(code)
+      valueInAssignmentStartsOnSameLineRule(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
          .hasLintViolation(2, 5, violationMessage)
@@ -390,7 +390,7 @@ class ValueInAssignmentStartsOnSameLineTest {
                 foobar
             )
       """.trimIndent()
-      multilineExpressionWrappingRuleAssertThat(code)
+      valueInAssignmentStartsOnSameLineRule(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
          .hasNoLintViolations()
@@ -407,7 +407,7 @@ class ValueInAssignmentStartsOnSameLineTest {
                 }
       """.trimIndent()
 
-      multilineExpressionWrappingRuleAssertThat(code)
+      valueInAssignmentStartsOnSameLineRule(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
          .hasNoLintViolations()
@@ -432,10 +432,10 @@ class ValueInAssignmentStartsOnSameLineTest {
                 }
       """.trimIndent()
 
-      multilineExpressionWrappingRuleAssertThat(code)
+      valueInAssignmentStartsOnSameLineRule(code)
          .hasNoLintViolations()
 
-      multilineExpressionWrappingRuleAssertThat(formattedCode)
+      valueInAssignmentStartsOnSameLineRule(formattedCode)
          .hasNoLintViolations()
    }
 
@@ -460,7 +460,7 @@ class ValueInAssignmentStartsOnSameLineTest {
                 }
       """.trimIndent()
 
-      multilineExpressionWrappingRuleAssertThat(code)
+      valueInAssignmentStartsOnSameLineRule(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
          .hasLintViolation(2, 5, violationMessage)
@@ -492,7 +492,7 @@ class ValueInAssignmentStartsOnSameLineTest {
             }
       """.trimIndent()
 
-      multilineExpressionWrappingRuleAssertThat(code)
+      valueInAssignmentStartsOnSameLineRule(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
          .hasLintViolation(2, 5, violationMessage)
@@ -516,7 +516,7 @@ class ValueInAssignmentStartsOnSameLineTest {
             }
       """.trimIndent()
 
-      multilineExpressionWrappingRuleAssertThat(code)
+      valueInAssignmentStartsOnSameLineRule(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
          .hasLintViolation(2, 5, violationMessage)
@@ -542,7 +542,7 @@ class ValueInAssignmentStartsOnSameLineTest {
             }
       """.trimIndent()
 
-      multilineExpressionWrappingRuleAssertThat(code)
+      valueInAssignmentStartsOnSameLineRule(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
          .hasLintViolation(2, 5, violationMessage)
@@ -568,7 +568,7 @@ class ValueInAssignmentStartsOnSameLineTest {
             }
       """.trimIndent()
 
-      multilineExpressionWrappingRuleAssertThat(code)
+      valueInAssignmentStartsOnSameLineRule(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
          .hasLintViolation(2, 5, violationMessage)
@@ -587,7 +587,7 @@ class ValueInAssignmentStartsOnSameLineTest {
             fun foo(any: Any) = any is
                 Foo
       """.trimIndent()
-      multilineExpressionWrappingRuleAssertThat(code)
+      valueInAssignmentStartsOnSameLineRule(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
          .hasLintViolation(2, 5, violationMessage)
@@ -607,7 +607,7 @@ class ValueInAssignmentStartsOnSameLineTest {
                 Foo
       """.trimIndent()
 
-      multilineExpressionWrappingRuleAssertThat(code)
+      valueInAssignmentStartsOnSameLineRule(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
          .hasLintViolation(2, 5, violationMessage)
@@ -625,7 +625,7 @@ class ValueInAssignmentStartsOnSameLineTest {
             fun foo(any: Int) = ++
                 42
       """.trimIndent()
-      multilineExpressionWrappingRuleAssertThat(code)
+      valueInAssignmentStartsOnSameLineRule(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
          .hasLintViolation(2, 5, violationMessage)
@@ -647,7 +647,7 @@ class ValueInAssignmentStartsOnSameLineTest {
             ]
       """.trimIndent()
 
-      multilineExpressionWrappingRuleAssertThat(code)
+      valueInAssignmentStartsOnSameLineRule(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
          .hasLintViolation(2, 5, violationMessage)
@@ -666,7 +666,7 @@ class ValueInAssignmentStartsOnSameLineTest {
             fun foo() = object :
                 Foo() {}
       """.trimIndent()
-      multilineExpressionWrappingRuleAssertThat(code)
+      valueInAssignmentStartsOnSameLineRule(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
          .hasLintViolation(2, 5, violationMessage)
@@ -690,7 +690,7 @@ class ValueInAssignmentStartsOnSameLineTest {
             val foobar = "foobar"
       """.trimIndent()
 
-      multilineExpressionWrappingRuleAssertThat(code)
+      valueInAssignmentStartsOnSameLineRule(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
          .hasLintViolation(2, 5, violationMessage)
@@ -720,7 +720,7 @@ class ValueInAssignmentStartsOnSameLineTest {
             }
       """.trimIndent()
 
-      multilineExpressionWrappingRuleAssertThat(code)
+      valueInAssignmentStartsOnSameLineRule(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
          .hasLintViolation(5, 9, violationMessage)
@@ -746,7 +746,7 @@ class ValueInAssignmentStartsOnSameLineTest {
             }
       """.trimIndent()
 
-      multilineExpressionWrappingRuleAssertThat(code)
+      valueInAssignmentStartsOnSameLineRule(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .withEditorConfigOverride(CODE_STYLE_PROPERTY to CodeStyleValue.ktlint_official)
          .hasLintViolation(3, 9, violationMessage)
@@ -772,7 +772,7 @@ class ValueInAssignmentStartsOnSameLineTest {
                     .trimIndent()
       """.trimIndent()
 
-      multilineExpressionWrappingRuleAssertThat(code)
+      valueInAssignmentStartsOnSameLineRule(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .hasLintViolation(2, 5, violationMessage)
          .isFormattedAs(formattedCode)
@@ -789,7 +789,7 @@ class ValueInAssignmentStartsOnSameLineTest {
             val foobar = foo!!
                 .bar()
       """.trimIndent()
-      multilineExpressionWrappingRuleAssertThat(code)
+      valueInAssignmentStartsOnSameLineRule(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .hasLintViolation(2, 5, violationMessage)
          .isFormattedAs(formattedCode)
@@ -816,7 +816,7 @@ class ValueInAssignmentStartsOnSameLineTest {
             )
       """.trimIndent()
 
-      multilineExpressionWrappingRuleAssertThat(code)
+      valueInAssignmentStartsOnSameLineRule(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .hasLintViolation(2, 5, violationMessage)
          .isFormattedAs(formattedCode)
@@ -842,7 +842,7 @@ class ValueInAssignmentStartsOnSameLineTest {
                 "bar2"
             }
       """.trimIndent()
-      multilineExpressionWrappingRuleAssertThat(code)
+      valueInAssignmentStartsOnSameLineRule(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .hasLintViolations(
             lintViolation(2, 5),
@@ -872,7 +872,7 @@ class ValueInAssignmentStartsOnSameLineTest {
                         "bar2"
                     }
       """.trimIndent()
-      multilineExpressionWrappingRuleAssertThat(code)
+      valueInAssignmentStartsOnSameLineRule(code)
          .addAdditionalRuleProvider { IndentationRule() }
          .hasLintViolations(
             LintViolation(1, 11, "A multiline expression should start on a new line"),
