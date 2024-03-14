@@ -1,5 +1,6 @@
 package com.github.kantis.ktlint
 
+import com.github.kantis.ktlint.util.offsetForLatestNewline
 import com.pinterest.ktlint.rule.engine.core.api.ElementType
 import com.pinterest.ktlint.rule.engine.core.api.IndentConfig
 import com.pinterest.ktlint.rule.engine.core.api.editorconfig.EditorConfig
@@ -89,12 +90,10 @@ public class ValueInAssignmentStartsOnSameLineRule : KantisRule(
          node.prevLeaf { !it.isPartOfComment() }
             .let { prevLeaf ->
                if (prevLeaf != null && prevLeaf.textContains('\n')) {
-                  if ( prevLeaf.startOffset + prevLeaf.textLength + node.firstChildNode.textLength <= maxLineLength) {
+                  val requiredLength = prevLeaf.startOffset + prevLeaf.textLength + node.firstChildNode.textLength -  prevLeaf.offsetForLatestNewline()
+                  if (requiredLength <= maxLineLength) {
                      emit(node.startOffset, "Value in assignment should start on same line as assignment", true)
-                     if (autoCorrect) {
-                        prevLeaf.replaceWithSingleSpace()
-
-                     }
+                     if (autoCorrect) prevLeaf.replaceWithSingleSpace()
                   } else {
                      // Line would become too long, skipping
                   }
