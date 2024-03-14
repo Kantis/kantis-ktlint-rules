@@ -24,6 +24,7 @@ Then configure the plugin to use the ruleset jar.
 If you don't have the ruleset jar version controlled you can use the ruleset by depending on it's maven artifact.
 
 ```kotlin
+// ‼️ TODO: Publishing is not yet enabled 
 dependencies {
     ktlintRuleset("com.github.kantis:kantis-ktlint-rules:$version")
 }
