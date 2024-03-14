@@ -1,5 +1,15 @@
 ## Getting started
 
+The ruleset contains modified variants of default Ktlint rules. Currently you need to disable the 
+following Ktlint rules when using this ruleset:
+
+```editorconfig
+[*.{kt,kts}]
+ktlint_standard_function-signature = disabled
+ktlint_standard_multiline-expression-wrapping = disabled
+ktlint_standard_string-template-indent = disabled
+```
+
 ### IntelliJ plugin / CLI
 
 Download the latest ruleset jar from the release page and put the jar in your repository. The size of the jar is small
