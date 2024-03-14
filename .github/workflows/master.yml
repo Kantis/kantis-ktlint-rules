@@ -36,6 +36,12 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
 
       - name: Build and publish
-        run: ./gradlew check publish -Pversion="${{ steps.stable-version.outputs.version || steps.version.outputs.version }}"
+        run: ./gradlew check publishToMavenLocal -Pversion="${{ steps.stable-version.outputs.version || steps.version.outputs.version }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: build/libs/kantis-ktlint-rules-*.jar
