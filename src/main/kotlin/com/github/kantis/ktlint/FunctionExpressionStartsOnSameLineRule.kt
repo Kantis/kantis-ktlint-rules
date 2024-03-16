@@ -7,17 +7,23 @@ import com.pinterest.ktlint.rule.engine.core.api.editorconfig.EditorConfig
 import com.pinterest.ktlint.rule.engine.core.api.editorconfig.INDENT_SIZE_PROPERTY
 import com.pinterest.ktlint.rule.engine.core.api.editorconfig.INDENT_STYLE_PROPERTY
 import com.pinterest.ktlint.rule.engine.core.api.editorconfig.MAX_LINE_LENGTH_PROPERTY
+import com.pinterest.ktlint.rule.engine.core.api.indent
 import com.pinterest.ktlint.rule.engine.core.api.isPartOfComment
 import com.pinterest.ktlint.rule.engine.core.api.isWhiteSpaceWithNewline
+import com.pinterest.ktlint.rule.engine.core.api.leavesIncludingSelf
 import com.pinterest.ktlint.rule.engine.core.api.nextCodeSibling
+import com.pinterest.ktlint.rule.engine.core.api.nextLeaf
 import com.pinterest.ktlint.rule.engine.core.api.nextSibling
 import com.pinterest.ktlint.rule.engine.core.api.prevLeaf
+import com.pinterest.ktlint.rule.engine.core.api.prevSibling
 import org.jetbrains.kotlin.com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.com.intellij.psi.impl.source.tree.PsiWhiteSpaceImpl
 
+public const val FUNCTION_EXPRESSION_STARTS_ON_SAME_LINE: String = "function-expression-starts-on-same-line"
+
 public class FunctionExpressionStartsOnSameLineRule : KantisRule(
-   "value-in-assignment-starts-on-same-line",
+   FUNCTION_EXPRESSION_STARTS_ON_SAME_LINE,
    visitorModifiers = setOf(),
    usesEditorConfigProperties = setOf(
       INDENT_SIZE_PROPERTY,
@@ -55,7 +61,6 @@ public class FunctionExpressionStartsOnSameLineRule : KantisRule(
    ) {
       val parent = node.treeParent
       val nextCode = node.nextCodeSibling() ?: return
-      val offsetForLatestNewline = node.offsetForLatestNewline()
 
       node.nextSibling { !it.isPartOfComment() }?.let { nextNode ->
          val eolCommentSibling = node.nextSibling { it.elementType == ElementType.EOL_COMMENT }
@@ -64,7 +69,18 @@ public class FunctionExpressionStartsOnSameLineRule : KantisRule(
             nextNode == nextCode -> Unit // All ok
 
             nextNode.isWhiteSpaceWithNewline() || eolCommentSibling != null && eolCommentSibling.startOffset < nextCode.startOffset -> {
-               val requiredLength = node.startOffset + node.textLength + nextCode.firstChildNode.textLength - offsetForLatestNewline
+               val stopLeaf = nextCode.nextLeaf { it.textContains('\n') }
+               val lineContent = node.prevLeaf { it.textContains('\n') }
+                  ?.leavesIncludingSelf()
+                  ?.takeWhile { it.prevLeaf() != stopLeaf }
+                  ?.filter { it != nextNode } // To be replaced by single whitespace
+                  ?.filter { it != eolCommentSibling }
+                  ?.joinToString(separator = "") { it.text }
+                  ?.substringAfter('\n')
+                  ?.substringBefore('\n')
+                  .orEmpty()
+
+               val requiredLength = lineContent.length + 1 // for new whitespace
 
                if (requiredLength <= maxLineLength) {
                   emit(nextCode.startOffset, "Right-hand side of function expression should start on same line, unless max line length would be exceeded", true)

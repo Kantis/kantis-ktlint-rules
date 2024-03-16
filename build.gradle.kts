@@ -94,6 +94,7 @@ artifacts {
 
 dependencies {
    implementation(libs.ktlint.cli)
+   implementation(libs.ktlint.rulesetStandard)
    implementation(libs.ktlint.cliRulesetCore)
    implementation(libs.ktlint.ruleEngineCore)
    testImplementation(libs.ktlint.rulesetStandard)

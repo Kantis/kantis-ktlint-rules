@@ -1,11 +1,10 @@
 package com.github.kantis.ktlint
 
-import com.pinterest.ktlint.rule.engine.core.api.editorconfig.CODE_STYLE_PROPERTY
-import com.pinterest.ktlint.rule.engine.core.api.editorconfig.CodeStyleValue
 import com.pinterest.ktlint.rule.engine.core.api.editorconfig.MAX_LINE_LENGTH_PROPERTY
 import com.pinterest.ktlint.ruleset.standard.rules.IndentationRule
 import com.pinterest.ktlint.test.KtLintAssertThat
 import com.pinterest.ktlint.test.LintViolation
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.junit.jupiter.api.Test
 
 class FunctionExpressionStartsOnSameLineTest {
@@ -90,9 +89,22 @@ class FunctionExpressionStartsOnSameLineTest {
          .isFormattedAs(formattedCode)
    }
 
+   @Test
+   fun `Line is skipped because it would become too long`(){
+      val code = """
+         class Foo {
+            fun toSchedules(employmentLevelTimeline: Timeline<EmploymentLevel>): Timeline<ScheduleId> =
+               employmentLevelTimeline.mapTimeline { level ->
+                  ScheduleId(scheduleFinder.findScheduleForEmploymentLevel(level).id)
+               }
+         }
+      """.trimIndent()
 
-   fun add(
-      a : Int,
-      b: Int
-   ) = a + b
+      applyRule(code)
+         .withEditorConfigOverride(MAX_LINE_LENGTH_PROPERTY to 140)
+         .hasNoLintViolations()
+   }
+
+
+   fun add(a : Int, b: Int) = a + b
 }
